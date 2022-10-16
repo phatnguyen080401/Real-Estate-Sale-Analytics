@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+/deploy/docker/
+/src/logs/*.log
+config.ini
+.idea
+
+tmp/
+checkpoint/
+data_source/
+src/kafka_jobs/test.py
+src/kafka_jobs/test2.py
+
+!.gitkeep
