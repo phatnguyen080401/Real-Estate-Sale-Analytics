@@ -26,14 +26,10 @@ class Batch:
     self._spark.sparkContext.setLogLevel("ERROR")
 
   def save_to_cassandra(self, tweet_df):
-    columns = ['user_id', 'user_name', 'tweet_text', 'created_at']
-
     try:
         records = tweet_df.count()
 
-        tweet_df2 = tweet_df.select([col(column_name) for column_name in columns])
-
-        tweet_df2 \
+        tweet_df \
             .write \
             .format("org.apache.spark.sql.cassandra") \
             .options(table="batch_layer", keyspace=CLUSTER_KEYSPACE) \
@@ -49,7 +45,7 @@ class Batch:
       df = self._spark \
                   .read \
                   .format("org.apache.spark.sql.cassandra") \
-                  .options(table="twitter_lake", keyspace=CLUSTER_KEYSPACE) \
+                  .options(table="data_lake", keyspace=CLUSTER_KEYSPACE) \
                   .load()
 
       self.save_to_cassandra(df)
