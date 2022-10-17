@@ -22,6 +22,7 @@ class Producer:
             .master("local[*]") \
             .appName("Producer") \
             .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0") \
+            .config('spark.sql.session.timeZone', 'UTC') \
             .getOrCreate()
     self._spark.sparkContext.setLogLevel("ERROR")
     self.topic = []
@@ -42,9 +43,9 @@ class Producer:
                   StructField("VendorID", LongType(), True),
                   StructField("tpep_pickup_datetime", TimestampType(), True),
                   StructField("tpep_dropoff_datetime", TimestampType(), True),
-                  StructField("passenger_count", LongType(), True),
+                  StructField("passenger_count", DoubleType(), True),
                   StructField("trip_distance", DoubleType(), True),
-                  StructField("RatecodeID", LongType(), True),
+                  StructField("RatecodeID", DoubleType(), True),
                   StructField("store_and_fwd_flag", StringType(), True),
                   StructField("PULocationID", LongType(), True),
                   StructField("DOLocationID", LongType(), True),
@@ -56,8 +57,8 @@ class Producer:
                   StructField("tolls_amount", DoubleType(), True),
                   StructField("improvement_surcharge", DoubleType(), True),
                   StructField("total_amount", DoubleType(), True),
-                  StructField("congestion_surcharge", IntegerType(), True),
-                  StructField("airport_fee", IntegerType(), True)
+                  StructField("congestion_surcharge", DoubleType(), True),
+                  StructField("airport_fee", DoubleType(), True)
           ])
 
     try:
@@ -67,9 +68,6 @@ class Producer:
             .parquet(f"./data/")
 
       num_records = len(df)
-      cols = df.columns
-      # df = df
-      # df = df
 
       logger.info(f"Reading file contains {num_records} records")
     except Exception as e:

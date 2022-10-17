@@ -55,83 +55,93 @@ class Consumer:
 
   def save_to_cassandra_lake(self, batch_df, batch_id):
     schema = StructType([
-                         StructField('tweet_id', LongType(), True),
-                         StructField('user_description', StringType(), True),
-                         StructField('user_favourites', LongType(), True),
-                         StructField('user_followers', LongType(), True),
-                         StructField('user_friends', LongType(), True),
-                         StructField('user_id', LongType(), True),
-                         StructField('user_location', StringType(), True),
-                         StructField('user_name', StringType(), True),
-                         StructField('author', StringType(), True),
-                         StructField('hashtags', ArrayType(StringType()), True),
-                         StructField('tweet_text', StringType(), True),
-                         StructField('retweet_count', IntegerType(), True),
-                         StructField('retweeted', BooleanType(), True),
-                         StructField('created_at', StringType(), True),
-                        ])
+                  StructField("vendor_id", LongType(), True),
+                  StructField("tpep_pickup_datetime", StringType(), True),
+                  StructField("tpep_dropoff_datetime", StringType(), True),
+                  StructField("passenger_count", DoubleType(), True),
+                  StructField("trip_distance", DoubleType(), True),
+                  StructField("ratecode_id", DoubleType(), True),
+                  StructField("store_and_fwd_flag", StringType(), True),
+                  StructField("pu_location_id", LongType(), True),
+                  StructField("do_location_id", LongType(), True),
+                  StructField("payment_type", LongType(), True),
+                  StructField("fare_amount", DoubleType(), True),
+                  StructField("extra", DoubleType(), True),
+                  StructField("mta_tax", DoubleType(), True),
+                  StructField("tip_amount", DoubleType(), True),
+                  StructField("tolls_amount", DoubleType(), True),
+                  StructField("improvement_surcharge", DoubleType(), True),
+                  StructField("total_amount", DoubleType(), True),
+                  StructField("congestion_surcharge", DoubleType(), True),
+                  StructField("airport_fee", DoubleType(), True)
+          ])
 
     try:
-        records = batch_df.count()
+      records = batch_df.count()
 
-        parse_df = batch_df.rdd.map(lambda x: Consumer.parse(json.loads(x.value))).toDF(schema)
+      parse_df = batch_df.rdd.map(lambda x: Consumer.parse(json.loads(x.value))).toDF(schema)
 
-        parse_df \
-            .write \
-            .format("org.apache.spark.sql.cassandra") \
-            .options(table="twitter_lake", keyspace=CLUSTER_KEYSPACE) \
-            .mode("append") \
-            .save()
+      parse_df \
+          .write \
+          .format("org.apache.spark.sql.cassandra") \
+          .options(table="data_lake", keyspace=CLUSTER_KEYSPACE) \
+          .mode("append") \
+          .save()
 
-        logger.info(f"Save to table: twitter_lake ({records} records)")
+      logger.info(f"Save to table: data_lake ({records} records)")
     except Exception as e:
       logger.error(e)
 
   @staticmethod
   def parse(raw_data):   
-    tweet_id = raw_data["id"]
+    vendor_id = raw_data["VendorID"]
+    tpep_pickup_datetime = raw_data["tpep_pickup_datetime"]
+    tpep_dropoff_datetime = raw_data["tpep_dropoff_datetime"]
+    passenger_count = raw_data["passenger_count"]
+    trip_distance = raw_data["trip_distance"]
+    ratecode_id = raw_data["RatecodeID"]
+    store_and_fwd_flag = raw_data["store_and_fwd_flag"]
+    pu_location_id = raw_data["PULocationID"]
+    do_location_id = raw_data["DOLocationID"]
+    payment_type = raw_data["payment_type"]
+    fare_amount = raw_data["fare_amount"]
+    extra = raw_data["extra"]
+    mta_tax = raw_data["mta_tax"]
+    tip_amount = raw_data["tip_amount"]
+    tolls_amount = raw_data["tolls_amount"]
+    improvement_surcharge = raw_data["improvement_surcharge"]
+    total_amount = raw_data["total_amount"]
 
-    author = raw_data["user"]["screen_name"]
-
-    user_id = raw_data["user"]["id"]
-    user_name = raw_data["user"]["name"]
-    user_location = raw_data["user"]["location"]
-    user_description = raw_data["user"]["description"]
-    user_followers = raw_data["user"]["followers_count"]
-    user_friends = raw_data["user"]["friends_count"]
-    user_favourites = raw_data["user"]["favourites_count"]
-
-    if raw_data["truncated"] == True:
-      tweet_text = raw_data["extended_tweet"]["full_text"]
-      hashtags = [hashtag["text"] for hashtag in raw_data["extended_tweet"]["entities"]["hashtags"]]
+    if "congestion_surcharge" in raw_data:
+      congestion_surcharge = raw_data["congestion_surcharge"]
     else:
-      tweet_text = raw_data["text"]
-      hashtags = [hashtag["text"] for hashtag in raw_data["entities"]["hashtags"]]
+      congestion_surcharge = None
 
-    created_at = raw_data["created_at"]
-
-    if 'retweeted_status' in raw_data:
-      retweet_count = raw_data["retweeted_status"]["retweet_count"]
-      retweeted = raw_data["retweeted_status"]["retweeted"]
+    if "airport_fee" in raw_data:
+      airport_fee = raw_data["airport_fee"]
     else:
-      retweet_count = raw_data["retweet_count"]
-      retweeted = raw_data["retweeted"]
+      airport_fee = None
 
     data = {
-              'tweet_id': tweet_id,
-              'author': author,
-              'user_id': user_id, 
-              'user_name': user_name, 
-              'user_location': user_location,
-              'user_description': user_description,
-              'user_followers': user_followers,
-              'user_friends': user_friends,
-              'user_favourites': user_favourites,
-              'hashtags': hashtags, 
-              'tweet_text': tweet_text, 
-              'retweet_count': retweet_count,
-              'retweeted': retweeted,
-              'created_at': created_at 
+              'vendor_id': vendor_id,
+              'tpep_pickup_datetime': tpep_pickup_datetime,
+              'tpep_dropoff_datetime': tpep_dropoff_datetime, 
+              'passenger_count': passenger_count, 
+              'trip_distance': trip_distance,
+              'ratecode_id': ratecode_id,
+              'store_and_fwd_flag': store_and_fwd_flag,
+              'pu_location_id': pu_location_id,
+              'do_location_id': do_location_id,
+              'payment_type': payment_type, 
+              'fare_amount': fare_amount, 
+              'extra': extra,
+              'mta_tax': mta_tax,
+              'tip_amount': tip_amount,
+              'tolls_amount': tolls_amount,
+              'improvement_surcharge': improvement_surcharge,
+              'total_amount': total_amount,
+              'congestion_surcharge': congestion_surcharge,
+              'airport_fee': airport_fee
             }
 
     return data
