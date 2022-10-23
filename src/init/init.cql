@@ -53,11 +53,15 @@ CREATE TABLE IF NOT EXISTS batch_layer (
 
 -- DROP TABLE IF EXISTS speed_layer;
 CREATE TABLE IF NOT EXISTS speed_layer (
-                            created_at text, 
-                            hashtags list<text>, 
-                            tweet_text text,
-                            user_id double,
-                            user_name text,
-                            user_location text,
-                            PRIMARY KEY (user_id, created_at)
+                            vendor_id double,
+                            tpep_pickup_datetime text,
+                            tpep_dropoff_datetime text,
+                            passenger_count double,
+                            trip_distance double,
+                            pu_location_id double,
+                            do_location_id double,
+                            fare_amount double,
+                            tip_amount double,
+                            total_amount double,  
+                            PRIMARY KEY ((tpep_pickup_datetime, tpep_dropoff_datetime), passenger_count)
 );
