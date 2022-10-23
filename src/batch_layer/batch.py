@@ -27,16 +27,18 @@ class Batch:
 
   def save_to_cassandra(self, tweet_df):
     try:
-        records = tweet_df.count()
+      records = tweet_df.count()
 
-        tweet_df \
-            .write \
-            .format("org.apache.spark.sql.cassandra") \
-            .options(table="batch_layer", keyspace=CLUSTER_KEYSPACE) \
-            .mode("append") \
-            .save()
+      tweet_df2 = tweet_df.select("*")
 
-        logger.info(f"Save to table: batch_layer ({records} records)")
+      tweet_df2 \
+          .write \
+          .format("org.apache.spark.sql.cassandra") \
+          .options(table="batch_layer", keyspace=CLUSTER_KEYSPACE) \
+          .mode("append") \
+          .save()
+
+      logger.info(f"Save to table: batch_layer ({records} records)")
     except Exception as e:
       logger.error(e)
 

@@ -47,15 +47,16 @@ def split_file(year, month, partition=100):
   helper.split_file(file_name, schema=schema, partition=partition)
 
 def move_file(year, month, num_file=100):
-  num = 1
+  num = 5
   while  num < num_file:
     file_name = f"yellow_tripdata_{year}-{month if month > 9 else '0' + str(month)}-{num}"
     helper.move_file(file_name)
     num += 1
-    time.sleep(5)
+    time.sleep(20)
 
 if __name__ == "__main__":
   year = 2022
   month = 1
 
-  split_file(2017, 1, 200)
+  # split_file(2017, 1, 1000)
+  move_file(2017, 1, 8)

@@ -49,19 +49,27 @@ class Speed:
 
     return df
 
-  def save_to_cassandra_lake(self, batch_df, batch_id):
+  def save_to_cassandra(self, batch_df, batch_id):
     schema = StructType([
-                         StructField('user_id', LongType(), True),
-                         StructField('user_location', StringType(), True),
-                         StructField('user_name', StringType(), True),
-                         StructField('hashtags', ArrayType(StringType()), True),
-                         StructField('tweet_text', StringType(), True),
-                         StructField('created_at', StringType(), True),
-                        ])
+                  StructField("vendor_id", LongType(), True),
+                  StructField("tpep_pickup_datetime", StringType(), True),
+                  StructField("tpep_dropoff_datetime", StringType(), True),
+                  StructField("passenger_count", DoubleType(), True),
+                  StructField("trip_distance", DoubleType(), True),
+                  StructField("pu_location_id", LongType(), True),
+                  StructField("do_location_id", LongType(), True),
+                  StructField("fare_amount", DoubleType(), True),
+                  StructField("tip_amount", DoubleType(), True),
+                  StructField("total_amount", DoubleType(), True),
+          ])
 
     try:
         records = batch_df.count()
+        
         parse_df = batch_df.rdd.map(lambda x: Speed.parse(json.loads(x.value))).toDF(schema)
+        parse_df = parse_df \
+                  .withColumn("tpep_pickup_datetime", to_timestamp("tpep_pickup_datetime", "yyyy-MM-dd HH:mm:ss")) \
+                  .withColumn("tpep_dropoff_datetime", to_timestamp("tpep_dropoff_datetime", "yyyy-MM-dd HH:mm:ss"))
 
         parse_df \
             .write \
@@ -76,26 +84,28 @@ class Speed:
 
   @staticmethod
   def parse(raw_data):
-    user_id = raw_data["user"]["id"]
-    user_name = raw_data["user"]["name"]
-    user_location = raw_data["user"]["location"]
-
-    if raw_data["truncated"] == True:
-      tweet_text = raw_data["extended_tweet"]["full_text"]
-      hashtags = [hashtag["text"] for hashtag in raw_data["extended_tweet"]["entities"]["hashtags"]]
-    else:
-      tweet_text = raw_data["text"]
-      hashtags = [hashtag["text"] for hashtag in raw_data["entities"]["hashtags"]]
-
-    created_at = raw_data["created_at"]
+    vendor_id = raw_data["VendorID"]
+    tpep_pickup_datetime = raw_data["tpep_pickup_datetime"]
+    tpep_dropoff_datetime = raw_data["tpep_dropoff_datetime"]
+    passenger_count = raw_data["passenger_count"]
+    trip_distance = raw_data["trip_distance"]
+    pu_location_id = raw_data["PULocationID"]
+    do_location_id = raw_data["DOLocationID"]
+    fare_amount = raw_data["fare_amount"]
+    tip_amount = raw_data["tip_amount"]
+    total_amount = raw_data["total_amount"]
 
     data = {
-              'user_id': user_id, 
-              'user_name': user_name, 
-              'user_location': user_location,
-              'hashtags': hashtags, 
-              'tweet_text': tweet_text, 
-              'created_at': created_at 
+              'vendor_id': vendor_id,
+              'tpep_pickup_datetime': tpep_pickup_datetime,
+              'tpep_dropoff_datetime': tpep_dropoff_datetime, 
+              'passenger_count': passenger_count, 
+              'trip_distance': trip_distance,
+              'pu_location_id': pu_location_id,
+              'do_location_id': do_location_id,
+              'fare_amount': fare_amount, 
+              'tip_amount': tip_amount,
+              'total_amount': total_amount
             }
 
     return data
@@ -106,8 +116,7 @@ class Speed:
 
       stream = df \
             .writeStream \
-            .trigger(processingTime='5 seconds') \
-            .foreachBatch(self.save_to_cassandra_lake) \
+            .foreachBatch(self.save_to_cassandra) \
             .outputMode("append") \
             .start()
 

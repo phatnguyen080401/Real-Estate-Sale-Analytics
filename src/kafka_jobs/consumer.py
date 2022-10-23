@@ -20,7 +20,7 @@ KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
 CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
 CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
 
-logger = Logger('Twitter-Lake')
+logger = Logger('Kafka-Consumer')
 
 class Consumer:
   def __init__(self):
@@ -42,7 +42,7 @@ class Consumer:
             .option("kafka.bootstrap.servers", KAFKA_ENDPOINT) \
             .option("subscribe", KAFKA_TOPIC) \
             .option("startingOffsets", "earliest") \
-            .option("kafka.group.id", "streaming_group") \
+            .option("kafka.group.id", "consumer_group") \
             .load()
 
       df = df.selectExpr("CAST(value AS STRING)")

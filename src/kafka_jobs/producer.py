@@ -67,9 +67,8 @@ class Producer:
             .schema(schema) \
             .parquet(f"./data/")
 
-      num_records = len(df)
 
-      logger.info(f"Reading file contains {num_records} records")
+      logger.info(f"Reading file...")
     except Exception as e:
       logger.error(e)
 
