@@ -63,7 +63,7 @@ services:
       - ../src/init/init.cql:/init/init.cql
     networks:
       - cass
-    command: /bin/bash -c "sleep 60 && cqlsh cassandra-seed -f init/init.cql"
+    command: /bin/bash -c "sleep 90 && cqlsh cassandra-seed -f init/init.cql"
 
   zookeeper:
     container_name: zookeeper
