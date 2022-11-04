@@ -47,7 +47,8 @@ class Helper:
   def split_file(self, file_name, schema, partition=100):
     name_function = lambda x: f"{file_name}-{x}.parquet"
     ddf = dd.read_parquet(f"./data_source/{file_name}.parquet")
-    ddf.repartition(partition).to_parquet("tmp/", name_function=name_function, schema=schema)
+    sorted_ddf = ddf.sort_values("tpep_pickup_datetime")
+    sorted_ddf.repartition(partition).to_parquet("tmp/", name_function=name_function, schema=schema)
 
   def move_file(self, file_name):
     shutil.move(f"./tmp/{file_name}.parquet", f"./data/{file_name}.parquet")
