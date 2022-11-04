@@ -1,1 +1,1 @@
-from .batch import Batch
+from .total_trip_distance_batch import Batch
