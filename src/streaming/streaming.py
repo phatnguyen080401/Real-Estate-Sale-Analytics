@@ -8,17 +8,10 @@ from helper import Helper
 
 helper = Helper.getHelper()
 
-def download_file(year, month, desired_year=2022, desired_month=1):
-  while year <= desired_year and month <= desired_month:
-    file_name = f"yellow_tripdata_{year}-{month if month > 9 else '0' + str(month)}"
-    url = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{file_name}.parquet"
-    helper.download_from_url(file_name, url)
-
-    if month == 12:
-      year += 1
-      month = 1
-    else:
-      month += 1
+def download_file(year, month):
+  file_name = f"yellow_tripdata_{year}-{month if month > 9 else '0' + str(month)}"
+  url = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{file_name}.parquet"
+  helper.download_from_url(file_name, url)
 
 def split_file(year, month, partition=100):
   schema = pa.schema([
@@ -47,16 +40,17 @@ def split_file(year, month, partition=100):
   helper.split_file(file_name, schema=schema, partition=partition)
 
 def move_file(year, month, num_file=100):
-  num = 5
-  while  num < num_file:
+  num = 2
+  while  num <= num_file:
     file_name = f"yellow_tripdata_{year}-{month if month > 9 else '0' + str(month)}-{num}"
     helper.move_file(file_name)
     num += 1
-    time.sleep(20)
+    time.sleep(30)
 
 if __name__ == "__main__":
   year = 2022
   month = 1
 
-  # split_file(2017, 1, 1000)
-  move_file(2017, 1, 8)
+  # split_file(2022, 1, 800)
+  move_file(2022, 1, 800)
+  # download_file(2022, 5)
