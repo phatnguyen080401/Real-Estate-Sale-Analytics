@@ -11,9 +11,6 @@ from pyspark.sql.functions import *
 from config.config import config
 from logger.logger import Logger
 
-# Add dependencies when linking with kafka 
-# os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0 pyspark-shell'
-
 KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
 
@@ -41,7 +38,7 @@ class Consumer:
             .format("kafka") \
             .option("kafka.bootstrap.servers", KAFKA_ENDPOINT) \
             .option("subscribe", KAFKA_TOPIC) \
-            .option("startingOffsets", "earliest") \
+            .option("startingOffsets", "latest") \
             .option("kafka.group.id", "consumer_group") \
             .load()
 
@@ -97,10 +94,7 @@ class Consumer:
     vendor_id = raw_data["VendorID"]
     tpep_pickup_datetime = raw_data["tpep_pickup_datetime"]
     tpep_dropoff_datetime = raw_data["tpep_dropoff_datetime"]
-    passenger_count = raw_data["passenger_count"]
     trip_distance = raw_data["trip_distance"]
-    ratecode_id = raw_data["RatecodeID"]
-    store_and_fwd_flag = raw_data["store_and_fwd_flag"]
     pu_location_id = raw_data["PULocationID"]
     do_location_id = raw_data["DOLocationID"]
     payment_type = raw_data["payment_type"]
@@ -111,6 +105,26 @@ class Consumer:
     tolls_amount = raw_data["tolls_amount"]
     improvement_surcharge = raw_data["improvement_surcharge"]
     total_amount = raw_data["total_amount"]
+
+    if "ratecode_id" in raw_data:
+      ratecode_id = raw_data["ratecode_id"]
+    else:
+      ratecode_id = None
+
+    if "store_and_fwd_flag" in raw_data:
+      store_and_fwd_flag = raw_data["store_and_fwd_flag"]
+    else:
+      store_and_fwd_flag = None
+
+    if "payment_type" in raw_data:
+      payment_type = raw_data["payment_type"]
+    else:
+      payment_type = None
+
+    if "passenger_count" in raw_data:
+      passenger_count = raw_data["passenger_count"]
+    else:
+      passenger_count = None
 
     if "congestion_surcharge" in raw_data:
       congestion_surcharge = raw_data["congestion_surcharge"]
@@ -123,25 +137,25 @@ class Consumer:
       airport_fee = None
 
     data = {
-              'vendor_id': vendor_id,
-              'tpep_pickup_datetime': tpep_pickup_datetime,
-              'tpep_dropoff_datetime': tpep_dropoff_datetime, 
-              'passenger_count': passenger_count, 
-              'trip_distance': trip_distance,
-              'ratecode_id': ratecode_id,
-              'store_and_fwd_flag': store_and_fwd_flag,
-              'pu_location_id': pu_location_id,
-              'do_location_id': do_location_id,
-              'payment_type': payment_type, 
-              'fare_amount': fare_amount, 
-              'extra': extra,
-              'mta_tax': mta_tax,
-              'tip_amount': tip_amount,
-              'tolls_amount': tolls_amount,
-              'improvement_surcharge': improvement_surcharge,
-              'total_amount': total_amount,
-              'congestion_surcharge': congestion_surcharge,
-              'airport_fee': airport_fee
+              "vendor_id": vendor_id,
+              "tpep_pickup_datetime": tpep_pickup_datetime,
+              "tpep_dropoff_datetime": tpep_dropoff_datetime, 
+              "passenger_count": passenger_count, 
+              "trip_distance": trip_distance,
+              "ratecode_id": ratecode_id,
+              "store_and_fwd_flag": store_and_fwd_flag,
+              "pu_location_id": pu_location_id,
+              "do_location_id": do_location_id,
+              "payment_type": payment_type, 
+              "fare_amount": fare_amount, 
+              "extra": extra,
+              "mta_tax": mta_tax,
+              "tip_amount": tip_amount,
+              "tolls_amount": tolls_amount,
+              "improvement_surcharge": improvement_surcharge,
+              "total_amount": total_amount,
+              "congestion_surcharge": congestion_surcharge,
+              "airport_fee": airport_fee
             }
 
     return data
@@ -150,9 +164,9 @@ class Consumer:
     try:
       df = self.comsume_from_kafka()
 
-      tweets = df.select(('value')).alias("data").select("data.*")
+      # tweets = df.select(('value')).alias("data").select("data.*")
 
-      stream = tweets \
+      stream = df \
             .writeStream \
             .trigger(processingTime='5 seconds') \
             .foreachBatch(self.save_to_cassandra_lake) \
