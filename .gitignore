@@ -18,7 +18,9 @@ config.ini
 tmp/
 checkpoint/
 data_source/
+data/
 src/kafka_jobs/test.py
 src/kafka_jobs/test2.py
 
+test.py
 !.gitkeep
