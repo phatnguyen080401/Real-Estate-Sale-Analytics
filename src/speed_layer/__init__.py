@@ -1,1 +1,1 @@
-from .speed import Speed
+from .total_trip_distance_speed import Speed
