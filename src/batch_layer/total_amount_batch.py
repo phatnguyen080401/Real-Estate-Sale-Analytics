@@ -14,14 +14,14 @@ from logger.logger import Logger
 CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
 CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
 
-logger = Logger('Batch-Total-Trip-Distance')
+logger = Logger('Batch-Total-Amount')
 
-class BatchTotalTripDistance:
+class BatchTotalAmount:
   def __init__(self):
     self._spark = SparkSession \
             .builder \
             .master("local[*]") \
-            .appName("Batch-Total-Trip-Distance") \
+            .appName("Batch-Total-Amount") \
             .config("spark.cassandra.connection.host", CLUSTER_ENDPOINT) \
             .config("spark.jars.packages", "com.datastax.spark:spark-cassandra-connector_2.12:3.2.0") \
             .getOrCreate()
@@ -32,28 +32,28 @@ class BatchTotalTripDistance:
     try:
       total_rides = batch_df.count()
 
-      trip_distance_df = batch_df \
-                            .select(col("trip_distance")) \
-                            .agg({'trip_distance': 'sum'}) \
-                            .toDF("total_trip_distance")
+      total_amount_df = batch_df \
+                            .select(col("total_amount")) \
+                            .agg({'total_amount': 'sum'}) \
+                            .toDF("total_amount")
 
-      total_trip_distance_df = trip_distance_df \
+      total_total_amount_df = total_amount_df \
                                     .withColumn("total_rides", lit(total_rides)) \
                                     .withColumn("started_at", lit(datetime.now())) \
 
       time.sleep(300)
 
-      total_trip_distance_df = total_trip_distance_df.withColumn("ended_at", lit(datetime.now()))
+      total_total_amount_df = total_total_amount_df.withColumn("ended_at", lit(datetime.now()))
 
-      total_trip_distance_df \
+      total_total_amount_df \
                       .write \
                       .format("org.apache.spark.sql.cassandra") \
-                      .options(table="total_trip_distance_batch", keyspace=CLUSTER_KEYSPACE) \
+                      .options(table="total_amount_batch", keyspace=CLUSTER_KEYSPACE) \
                       .mode("append") \
                       .save()
 
-      total_distance = total_trip_distance_df.collect()[0][0]
-      logger.info(f"Save to total_trip_distance_batch ({total_distance}, {total_rides})")
+      total_amount = total_total_amount_df.collect()[0][0]
+      logger.info(f"Save to total_amount_batch ({total_amount}, {total_rides})")
     except Exception as e:
       logger.error(e)
 
@@ -70,4 +70,4 @@ class BatchTotalTripDistance:
       logger.error(e)
       
 if __name__ == '__main__':
-  BatchTotalTripDistance().run()
+  BatchTotalAmount().run()
