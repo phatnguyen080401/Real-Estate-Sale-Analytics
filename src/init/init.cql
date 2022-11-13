@@ -5,6 +5,7 @@ USE nyc_taxi;
 
 -- DROP TABLE IF EXISTS data_lake;
 CREATE TABLE IF NOT EXISTS data_lake (
+                            id uuid,
                             vendor_id int,
                             tpep_pickup_datetime text,
                             tpep_dropoff_datetime text,
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS data_lake (
                             total_amount double, 
                             congestion_surcharge double, 
                             airport_fee double, 
-                            PRIMARY KEY (tpep_pickup_datetime, tpep_dropoff_datetime)
+                            PRIMARY KEY (id)
 );
 
 -- DROP TABLE IF EXISTS total_trip_distance_batch;
@@ -38,11 +39,12 @@ CREATE TABLE IF NOT EXISTS total_trip_distance_batch (
 
 -- DROP TABLE IF EXISTS total_trip_distance_speed;
 CREATE TABLE IF NOT EXISTS total_trip_distance_speed (
+                            id uuid,
                             tpep_pickup_datetime timestamp,
                             tpep_dropoff_datetime timestamp,
                             trip_distance double,
                             created_at timestamp,
-                            PRIMARY KEY ((tpep_pickup_datetime, tpep_dropoff_datetime), created_at)
+                            PRIMARY KEY (id)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
@@ -57,11 +59,12 @@ CREATE TABLE IF NOT EXISTS total_amount_batch (
 
 -- DROP TABLE IF EXISTS total_amount_speed;
 CREATE TABLE IF NOT EXISTS total_amount_speed (
+                            id uuid,
                             tpep_pickup_datetime timestamp,
                             tpep_dropoff_datetime timestamp,
                             total_amount double,
                             created_at timestamp,
-                            PRIMARY KEY ((tpep_pickup_datetime, tpep_dropoff_datetime), created_at)
+                            PRIMARY KEY (id)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
@@ -76,19 +79,23 @@ CREATE TABLE IF NOT EXISTS total_passenger_batch (
 
 -- DROP TABLE IF EXISTS total_passenger_speed;
 CREATE TABLE IF NOT EXISTS total_passenger_speed (
+                            id uuid,
                             tpep_pickup_datetime timestamp,
                             tpep_dropoff_datetime timestamp,
                             passenger_count double,
                             created_at timestamp,
-                            PRIMARY KEY ((tpep_pickup_datetime, tpep_dropoff_datetime), created_at)
+                            PRIMARY KEY (id)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
--- DROP TABLE IF EXISTS pickup_dropoff_districts_speed;
-CREATE TABLE IF NOT EXISTS pickup_dropoff_districts_speed (
+-- DROP TABLE IF EXISTS pickup_dropoff_speed;
+CREATE TABLE IF NOT EXISTS pickup_dropoff_speed (
+                            id uuid,
                             vendor_id double,
+                            tpep_pickup_datetime text,
+                            tpep_dropoff_datetime text,
                             pu_location_id double,
                             do_location_id double,
                             created_at timestamp,
-                            PRIMARY KEY ((pu_location_id, do_location_id), created_at)
-) WITH CLUSTERING ORDER BY (created_at DESC)
+                            PRIMARY KEY (id)
+);
