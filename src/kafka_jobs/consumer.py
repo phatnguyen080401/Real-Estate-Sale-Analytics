@@ -1,8 +1,8 @@
 import sys
 sys.path.append(".")
 
-import os
 import json
+import uuid
 
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
@@ -76,7 +76,10 @@ class Consumer:
     try:
       records = batch_df.count()
 
+      uuid_generator = udf(lambda: str(uuid.uuid4()), StringType())
+
       parse_df = batch_df.rdd.map(lambda x: Consumer.parse(json.loads(x.value))).toDF(schema)
+      parse_df = parse_df.withColumn("id", uuid_generator())
 
       parse_df \
           .write \
