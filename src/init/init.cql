@@ -99,3 +99,11 @@ CREATE TABLE IF NOT EXISTS pickup_dropoff_speed (
                             created_at timestamp,
                             PRIMARY KEY (id)
 );
+
+-- DROP TABLE IF EXISTS user_per_payment_speed;
+CREATE TABLE IF NOT EXISTS user_per_payment_speed (
+                            id uuid,
+                            vendor_id double,
+                            payment_type double,
+                            PRIMARY KEY (id)
+);
