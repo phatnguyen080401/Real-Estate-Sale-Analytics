@@ -6,3 +6,5 @@ pandas
 plotly
 dask
 streamlit
+seaborn
+matplotlib
