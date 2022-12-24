@@ -17,6 +17,26 @@ st.set_page_config(
 session = Cluster().connect()
 session.set_keyspace("nyc_taxi")
 
+def recreate_table(table_name):
+  '''
+    Recreate table
+  '''
+  session.execute(f"DROP TABLE IF EXISTS {table_name};")
+  session.execute(f'''
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                          id uuid,
+                          vendor_id double,
+                          tpep_pickup_datetime text,
+                          tpep_dropoff_datetime text,
+                          pu_location_id double,
+                          do_location_id double,
+                          created_at timestamp,
+                          PRIMARY KEY (id)
+                    );
+                  '''
+              )
+
+
 @st.experimental_memo
 def get_average_trip_distance():
   batch_query = '''
@@ -144,6 +164,25 @@ def get_top10_dropoff_districts():
 
   return top10_dropoff_districts_df
 
+def get_user_per_payment():
+  speed_query = f'''
+                  SELECT vendor_id, 
+                         payment_type 
+                  FROM user_per_payment_speed ;
+                '''
+  speed_data = session.execute(speed_query)
+  df = pd.DataFrame(speed_data)
+
+  user_per_payment_df = df \
+                          .groupby('payment_type', as_index=False) \
+                          .sum() \
+                          .rename({'vendor_id' : 'count'}, axis=1) \
+                          .sort_values('count', ascending=False)
+  payment_type = ["Credit card", "Cash", "No charge", "Dispute", "Unknown", "Voided trip"]
+  user_per_payment_df['payment_name'] = payment_type[:user_per_payment_df.shape[0]]
+
+  return user_per_payment_df
+
 # dashboard title
 st.title("Real-Time NYC Taxi Dashboard")
 
@@ -153,18 +192,17 @@ placeholder = st.empty()
 # near real-time / live feed simulation
 while True:
   with placeholder.container():
-    # average_distance = get_average_trip_distance()
+    average_distance = get_average_trip_distance()
     average_total_amount = get_average_total_amount()
     average_passenger = get_average_passenger()
 
     # create three columns
     kpi1, kpi2, kpi3 = st.columns(3)
 
-    # fill in those three columns with respective metrics or KPIs
-    # kpi1.metric(
-    #   label="Average Trip Distance",
-    #   value=round(average_distance, 3)
-    # )
+    kpi1.metric(
+      label="Average Trip Distance",
+      value=round(average_distance, 3)
+    )
         
     kpi2.metric(
       label="Average Total Amount",
@@ -172,13 +210,15 @@ while True:
     )
 
     kpi3.metric(
-      label="Average Total Amount",
+      label="Average Passenger",
       value=round(average_passenger, 2)
     )
 
     # create two columns for charts
     fig_col1, fig_col2 = st.columns(2)
     with fig_col1:
+      st.markdown("Top 10 Pickup and Dropoff Places")
+
       fig = plt.figure(figsize=(20, 15))
       ax0 = fig.add_subplot(1, 2, 1)
       ax1 = fig.add_subplot(1, 2, 2)
@@ -223,26 +263,22 @@ while True:
 
       time.sleep(5)
       
-      # recreate table
-      session.execute("DROP TABLE IF EXISTS pickup_dropoff_speed;")
-      session.execute('''
-                        CREATE TABLE IF NOT EXISTS pickup_dropoff_speed (
-                              id uuid,
-                              vendor_id double,
-                              tpep_pickup_datetime text,
-                              tpep_dropoff_datetime text,
-                              pu_location_id double,
-                              do_location_id double,
-                              created_at timestamp,
-                              PRIMARY KEY (id)
-                        );
-                      '''
-                      )
+      recreate_table("pickup_dropoff_speed")
+      
       st.write(fig)
             
-    # with fig_col2:
-    #   st.markdown("### Second Chart")
-    #   fig2 = px.histogram(data_frame=df, x="age_new")
-    #   st.write(fig2)
+    with fig_col2:
+      st.markdown("User per payment")
+      
+      fig = px.pie(get_user_per_payment(), 
+                   values='vendor_id', 
+                   names='payment_name', 
+                   title='User per payment')
 
-    time.sleep(40)
+      time.sleep(5)
+      
+      recreate_table("user_per_payment_speed")
+
+      st.write(fig)
+
+    time.sleep(45)
