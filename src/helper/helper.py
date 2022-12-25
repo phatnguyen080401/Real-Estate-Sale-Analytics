@@ -50,8 +50,8 @@ class Helper:
     sorted_ddf = ddf.sort_values("tpep_pickup_datetime")
     sorted_ddf.repartition(partition).to_parquet("tmp/", name_function=name_function, schema=schema)
 
-  def move_file(self, file_name):
-    shutil.move(f"./tmp/{file_name}.parquet", f"./data/{file_name}.parquet")
+  def move_file(self, source, destination, file_name):
+    shutil.move(f"./{source}/{file_name}.parquet", f"./{destination}/{file_name}.parquet")
 
   def main():
     pass
