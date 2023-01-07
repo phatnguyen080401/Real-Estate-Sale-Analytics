@@ -17,30 +17,9 @@ st.set_page_config(
 session = Cluster().connect()
 session.set_keyspace("nyc_taxi")
 
-def recreate_table(table_name):
-  '''
-    Recreate table
-  '''
-  session.execute(f"DROP TABLE IF EXISTS {table_name};")
-  session.execute(f'''
-                    CREATE TABLE IF NOT EXISTS {table_name} (
-                          id uuid,
-                          vendor_id double,
-                          tpep_pickup_datetime text,
-                          tpep_dropoff_datetime text,
-                          pu_location_id double,
-                          do_location_id double,
-                          created_at timestamp,
-                          PRIMARY KEY (id)
-                    );
-                  '''
-              )
-
-
-@st.experimental_memo
 def get_average_trip_distance():
   batch_query = '''
-                  SELECT total_trip_distance, total_rides, started_at, ended_at 
+                  SELECT total_trip_distance, total_rides, ended_at, started_at
                   FROM total_trip_distance_batch 
                   LIMIT 1 ;
                 '''
@@ -62,10 +41,9 @@ def get_average_trip_distance():
 
   return average_distance
 
-@st.experimental_memo
 def get_average_total_amount():
   batch_query = '''
-                  SELECT total_amount, total_rides, started_at, ended_at 
+                  SELECT total_amount, total_rides, ended_at, started_at
                   FROM total_amount_batch 
                   LIMIT 1 ;
                 '''
@@ -87,10 +65,9 @@ def get_average_total_amount():
 
   return average_total_amount
 
-@st.experimental_memo
-def get_average_passenger():
+def get_total_passenger():
   batch_query = '''
-                  SELECT total_passenger, total_rides, started_at, ended_at 
+                  SELECT total_passenger, total_rides, ended_at, started_at 
                   FROM total_passenger_batch 
                   LIMIT 1 ;
                 '''
@@ -108,7 +85,7 @@ def get_average_passenger():
   speed_data = session.execute(speed_query).all()
   total_passenger_speed, total_rides_speed = speed_data[0]
 
-  average_passenger = (total_passenger_batch + total_passenger_speed) / (total_rides_batch + total_rides_speed)
+  average_passenger = total_passenger_batch + total_passenger_speed
 
   return average_passenger
 
@@ -194,7 +171,7 @@ while True:
   with placeholder.container():
     average_distance = get_average_trip_distance()
     average_total_amount = get_average_total_amount()
-    average_passenger = get_average_passenger()
+    total_passenger = get_total_passenger()
 
     # create three columns
     kpi1, kpi2, kpi3 = st.columns(3)
@@ -210,8 +187,8 @@ while True:
     )
 
     kpi3.metric(
-      label="Average Passenger",
-      value=round(average_passenger, 2)
+      label="Total Passenger",
+      value=round(total_passenger, 2)
     )
 
     # create two columns for charts
@@ -260,10 +237,8 @@ while True:
           
       for s in ['top', 'bottom','left']:    
           ax1.spines[s].set_visible(False)
-
-      time.sleep(5)
       
-      recreate_table("pickup_dropoff_speed")
+      session.execute("TRUNCATE TABLE pickup_dropoff_speed;")
       
       st.write(fig)
             
@@ -271,13 +246,11 @@ while True:
       st.markdown("User per payment")
       
       fig = px.pie(get_user_per_payment(), 
-                   values='vendor_id', 
+                   values='count', 
                    names='payment_name', 
                    title='User per payment')
 
-      time.sleep(5)
-      
-      recreate_table("user_per_payment_speed")
+      session.execute("TRUNCATE TABLE user_per_payment_speed;")
 
       st.write(fig)
 
