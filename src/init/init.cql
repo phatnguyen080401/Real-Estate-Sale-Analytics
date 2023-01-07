@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS total_trip_distance_speed (
                             tpep_dropoff_datetime timestamp,
                             trip_distance double,
                             created_at timestamp,
-                            PRIMARY KEY (id)
+                            PRIMARY KEY (id, created_at)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS total_amount_speed (
                             tpep_dropoff_datetime timestamp,
                             total_amount double,
                             created_at timestamp,
-                            PRIMARY KEY (id)
+                            PRIMARY KEY (id, created_at)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS total_passenger_speed (
                             tpep_dropoff_datetime timestamp,
                             passenger_count double,
                             created_at timestamp,
-                            PRIMARY KEY (id)
+                            PRIMARY KEY (id, created_at)
 ) WITH CLUSTERING ORDER BY (created_at DESC) 
     AND default_time_to_live = 604800;
 
@@ -105,5 +105,6 @@ CREATE TABLE IF NOT EXISTS user_per_payment_speed (
                             id uuid,
                             vendor_id double,
                             payment_type double,
+                            created_at timestamp,
                             PRIMARY KEY (id)
 );
