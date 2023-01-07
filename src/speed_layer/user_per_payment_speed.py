@@ -55,8 +55,7 @@ class SpeedUserPerPayment:
   def save_to_cassandra(self, batch_df, batch_id):
     schema = StructType([
                   StructField("vendor_id", LongType(), True),
-                  StructField("payment_type", LongType(), True),
-                  StructField("total_amount", LongType(), True)
+                  StructField("payment_type", LongType(), True)
           ])
 
     try:
