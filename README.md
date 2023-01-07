@@ -1,11 +1,10 @@
 # Lambda-architecture
 In this project, we are trying to build data pipeline using Lambda architecture to handle massive quantities of data by 
-taking advantage of both batch and stream processing methods. Besides, we also analyze Twitter's tweets.
+taking advantage of both batch and stream processing methods. Besides, we also analyze New York City taxi data.
 
 ## Prerequisite
 * Python 3.*
 * Apache Spark 3.2.*
-* Account for Twitter API
 
 ## Setup
 1. **Config.ini file**
@@ -45,4 +44,4 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 ```
 
 ## Common Error
-1. If not find **twitter** keyspace, run container `cassandra-init-schema` again
+1. If not find **nyc_taxi** keyspace, run container `cassandra-init-schema` again
