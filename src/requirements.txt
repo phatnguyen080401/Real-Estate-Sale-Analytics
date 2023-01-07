@@ -1,6 +1,5 @@
 cassandra-driver
 pyspark==3.2.0
-tweepy==3.9.0
 kafka-python
 pandas
 plotly
