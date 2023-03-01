@@ -15,13 +15,8 @@ parser.read_file(open(helper.join_path(ROOT_DIR, "./config.ini")))
 config = {
     "ROOT_DIR": ROOT_DIR,
 
-    "CASSANDRA": {
-        "CLUSTER_NAME": parser.get('CASSANDRA', 'CLUSTER_NAME'),
-        "CLUSTER_KEYSPACE": parser.get('CASSANDRA', 'CLUSTER_KEYSPACE'),
-        "CLUSTER_USERNAME": parser.get('CASSANDRA', 'CLUSTER_USERNAME'),
-        "CLUSTER_PASSWORD": parser.get('CASSANDRA', 'CLUSTER_PASSWORD'),
-        "CLUSTER_HOST": parser.get('CASSANDRA', 'CLUSTER_HOST'),
-        "CLUSTER_PORT": parser.getint('CASSANDRA', 'CLUSTER_PORT')
+    "SNOWFLAKE": {
+
     },
 
     "KAFKA": {
