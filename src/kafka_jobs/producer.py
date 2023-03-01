@@ -10,8 +10,8 @@ from kafka.admin import KafkaAdminClient, NewTopic
 from config.config import config
 from logger.logger import Logger
 
-KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
+KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 
 logger = Logger("Kafka-Producer")
 
