@@ -16,7 +16,13 @@ config = {
     "ROOT_DIR": ROOT_DIR,
 
     "SNOWFLAKE": {
-
+        "URL": parser.get('SNOWFLAKE', 'URL'),
+        "ACCOUNT": parser.get('SNOWFLAKE', 'ACCOUNT'),
+        "USER": parser.get('SNOWFLAKE', 'USER'),
+        "PASSWORD": parser.get('SNOWFLAKE', 'PASSWORD'),
+        "DATABASE": parser.get('SNOWFLAKE', 'DATABASE'),
+        "SCHEMA": parser.get('SNOWFLAKE', 'SCHEMA'),
+        "WAREHOUSE": parser.get('SNOWFLAKE', 'WAREHOUSE'),
     },
 
     "KAFKA": {
