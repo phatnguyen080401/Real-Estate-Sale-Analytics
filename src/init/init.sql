@@ -18,7 +18,6 @@ CREATE OR REPLACE SCHEMA yellow_taxi_speed;
 -- Create tables
 -- table: data_lake
 CREATE OR REPLACE TABLE nyc_db.nyc_lake.data_lake (
-	id BIGINT NOT NULL AUTOINCREMENT(1,1) PRIMARY KEY,
 	vendor_id SMALLINT,
 	tpep_pickup_datetime TEXT,
 	tpep_dropoff_datetime TEXT,
