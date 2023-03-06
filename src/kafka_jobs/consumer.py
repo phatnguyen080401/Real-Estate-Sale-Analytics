@@ -20,7 +20,6 @@ SNOWFLAKE_OPTIONS = {
     "sfUser" : config['SNOWFLAKE']['USER'],
     "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
     "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
-    "sfSchema" : config['SNOWFLAKE']['SCHEMA'],
     "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
 }
 
@@ -101,6 +100,7 @@ class Consumer:
           .write \
           .format("snowflake") \
           .options(**SNOWFLAKE_OPTIONS) \
+          .option("sfSchema", "nyc_lake") \
           .option("dbtable", "data_lake") \
           .options(header=True) \
           .mode("append") \
