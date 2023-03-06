@@ -1,7 +1,5 @@
 version: "3.7"
 
-name: kafka-service
-
 services:
   zookeeper:
     container_name: zookeeper

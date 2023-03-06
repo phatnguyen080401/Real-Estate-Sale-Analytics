@@ -40,8 +40,6 @@
 ---
 version: '3.7'
 
-name: postgres-airflow
-
 x-airflow-common:
   &airflow-common
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
