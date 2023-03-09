@@ -2,6 +2,5 @@
 
 cd ./src
 virtualenv venv
-source venv/bin/activate        # Linux
-#venv/Scripts/activate          # Windows
+source venv/bin/activate
 pip install -r requirements.txt
