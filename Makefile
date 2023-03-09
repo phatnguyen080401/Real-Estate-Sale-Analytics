@@ -13,6 +13,3 @@ reset-volume-docker:
 
 setup-env:
 	bash scripts/setup-env.sh
-
-start-all:
-	bash scripts/start-all.sh
