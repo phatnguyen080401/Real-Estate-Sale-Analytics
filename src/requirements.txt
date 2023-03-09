@@ -6,3 +6,4 @@ dask
 streamlit
 seaborn
 matplotlib
+apache-airflow
