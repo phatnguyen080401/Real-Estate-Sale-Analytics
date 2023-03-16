@@ -11,8 +11,14 @@ from pyspark.sql.types import *
 from config.config import config
 from logger.logger import Logger
 
-CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
-CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
+SNOWFLAKE_OPTIONS = {
+    "sfURL" : config['SNOWFLAKE']['URL'],
+    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
+    "sfUser" : config['SNOWFLAKE']['USER'],
+    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
+    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
+    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
+}
 
 logger = Logger('Batch-Total-Trip-Distance')
 
@@ -21,14 +27,17 @@ class BatchTotalTripDistance:
     self._spark = SparkSession \
             .builder \
             .master("local[*]") \
-            .appName("Batch-Total-Trip-Distance") \
-            .config("spark.cassandra.connection.host", CLUSTER_ENDPOINT) \
-            .config("spark.jars.packages", "com.datastax.spark:spark-cassandra-connector_2.12:3.2.0") \
+            .appName("Batch-Total-Amount") \
+            .config("spark.jars.packages", 
+                    "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0," +
+                    "net.snowflake:snowflake-jdbc:3.13.26," + 
+                    "net.snowflake:spark-snowflake_2.13:2.11.1-spark_3.3"
+                  ) \
             .getOrCreate()
     
     self._spark.sparkContext.setLogLevel("ERROR")
 
-  def save_to_cassandra(self, batch_df):
+  def save_to_snowflake(self, batch_df):
     try:
       total_rides = batch_df.count()
 
@@ -47,8 +56,11 @@ class BatchTotalTripDistance:
 
       total_trip_distance_df \
                       .write \
-                      .format("org.apache.spark.sql.cassandra") \
-                      .options(table="total_trip_distance_batch", keyspace=CLUSTER_KEYSPACE) \
+                      .format("snowflake") \
+                      .options(**SNOWFLAKE_OPTIONS) \
+                      .option("sfSchema", "YELLOW_TAXI_BATCH") \
+                      .option("dbtable", "TOTAL_TRIP_DISTANCE") \
+                      .options(header=True) \
                       .mode("append") \
                       .save()
 
@@ -61,11 +73,13 @@ class BatchTotalTripDistance:
     try:
       df = self._spark \
                   .read \
-                  .format("org.apache.spark.sql.cassandra") \
-                  .options(table="data_lake", keyspace=CLUSTER_KEYSPACE) \
+                  .format("snowflake") \
+                  .options(**SNOWFLAKE_OPTIONS) \
+                  .option("sfSchema", "nyc_lake") \
+                  .option("dbtable", "data_lake") \
                   .load()
 
-      self.save_to_cassandra(df)
+      self.save_to_snowflake(df)
     except Exception as e:
       logger.error(e)
       

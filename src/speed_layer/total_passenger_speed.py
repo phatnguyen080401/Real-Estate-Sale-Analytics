@@ -16,8 +16,14 @@ from logger.logger import Logger
 KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
 
-CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
-CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
+SNOWFLAKE_OPTIONS = {
+    "sfURL" : config['SNOWFLAKE']['URL'],
+    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
+    "sfUser" : config['SNOWFLAKE']['USER'],
+    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
+    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
+    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
+}
 
 logger = Logger('Speed-Total-Passenger')
 
@@ -27,8 +33,11 @@ class SpeedTotalPassenger:
             .builder \
             .master("local[*]") \
             .appName("Speed-Total-Passenger") \
-            .config("spark.cassandra.connection.host", CLUSTER_ENDPOINT) \
-            .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0,com.datastax.spark:spark-cassandra-connector_2.12:3.1.0") \
+            .config("spark.jars.packages", 
+                    "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0," +
+                    "net.snowflake:snowflake-jdbc:3.13.26," + 
+                    "net.snowflake:spark-snowflake_2.13:2.11.1-spark_3.3"
+                  ) \
             .getOrCreate()
     
     self._spark.sparkContext.setLogLevel("ERROR")
@@ -73,8 +82,10 @@ class SpeedTotalPassenger:
 
         parse_df \
             .write \
-            .format("org.apache.spark.sql.cassandra") \
-            .options(table="total_passenger_speed", keyspace=CLUSTER_KEYSPACE) \
+            .format("snowflake") \
+                      .options(**SNOWFLAKE_OPTIONS) \
+                      .option("sfSchema", "YELLOW_TAXI_SPEED") \
+                      .option("dbtable", "TOTAL_PASSENGER") \
             .mode("append") \
             .save()
 
