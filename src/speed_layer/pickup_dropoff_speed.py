@@ -16,8 +16,14 @@ from logger.logger import Logger
 KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
 
-CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
-CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
+SNOWFLAKE_OPTIONS = {
+    "sfURL" : config['SNOWFLAKE']['URL'],
+    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
+    "sfUser" : config['SNOWFLAKE']['USER'],
+    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
+    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
+    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
+}
 
 logger = Logger('Speed-Pickup-Dropoff')
 
@@ -27,8 +33,11 @@ class SpeedPickupDropoff:
             .builder \
             .master("local[*]") \
             .appName("Speed-Pickup-Dropoff") \
-            .config("spark.cassandra.connection.host", CLUSTER_ENDPOINT) \
-            .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0,com.datastax.spark:spark-cassandra-connector_2.12:3.1.0") \
+            .config("spark.jars.packages", 
+                    "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0," +
+                    "net.snowflake:snowflake-jdbc:3.13.14," + 
+                    "net.snowflake:spark-snowflake_2.12:2.11.0-spark_3.2"
+                  ) \
             .getOrCreate()
     
     self._spark.sparkContext.setLogLevel("ERROR")
@@ -52,7 +61,7 @@ class SpeedPickupDropoff:
 
     return df
 
-  def save_to_cassandra(self, batch_df, batch_id):
+  def save_to_snowflake(self, batch_df, batch_id):
     schema = StructType([
                   StructField("vendor_id", LongType(), True),
                   StructField("tpep_pickup_datetime", StringType(), True),
@@ -75,8 +84,10 @@ class SpeedPickupDropoff:
 
         parse_df \
             .write \
-            .format("org.apache.spark.sql.cassandra") \
-            .options(table="pickup_dropoff_speed", keyspace=CLUSTER_KEYSPACE) \
+            .format("snowflake") \
+            .options(**SNOWFLAKE_OPTIONS) \
+            .option("sfSchema", "YELLOW_TAXI_SPEED") \
+            .option("dbtable", "PICKUP_DROPOFF") \
             .mode("append") \
             .save()
 
@@ -108,7 +119,7 @@ class SpeedPickupDropoff:
 
       stream = df \
             .writeStream \
-            .foreachBatch(self.save_to_cassandra) \
+            .foreachBatch(self.save_to_snowflake) \
             .outputMode("append") \
             .start()
 

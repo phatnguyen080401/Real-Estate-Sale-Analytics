@@ -83,6 +83,32 @@ CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.pickup_dropoff (
 CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.user_per_payment (
     vendor_id FLOAT,
     payment_type FLOAT,
-    created_at TIMESTAMP_NTZ(9),
-    PRIMARY KEY (id)
+    created_at TIMESTAMP_NTZ(9)
+);
+
+-- schema: yellow_taxi_speed
+-- table: total_amount
+CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_amount (
+    tpep_pickup_datetime TIMESTAMP_NTZ(9),
+    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
+    total_amount FLOAT,
+    created_at TIMESTAMP_NTZ(9)
+);
+
+-- schema: yellow_taxi_speed
+-- table: total_trip_distance
+CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_trip_distance (
+    tpep_pickup_datetime TIMESTAMP_NTZ(9),
+    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
+    trip_distance FLOAT,
+    created_at TIMESTAMP_NTZ(9)
+);
+
+-- schema: yellow_taxi_speed
+-- table: total_passenger
+CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_passenger (
+    tpep_pickup_datetime TIMESTAMP_NTZ(9),
+    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
+    passenger_count FLOAT,
+    created_at TIMESTAMP_NTZ(9)
 );
