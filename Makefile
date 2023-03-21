@@ -1,15 +1,27 @@
-start-docker:
+build-image:
+	docker build -t custom-airflow ./src
+
+start-kafka:
 	docker-compose -f ./deploy/docker-compose.yml up -d
 
-shutdown-docker:
+shutdown-kafka:
 	docker-compose -f ./deploy/docker-compose.yml down
 	sudo rm -rf ./deploy/docker/volumes/kafka/meta.properties
 
+start-airflow:
+	docker-compose -f ./deploy/apache-airflow.yml up -d
+
+shutdown-airflow:
+	docker-compose -f ./deploy/apache-airflow.yml down
+
 reset-volume-docker:
-	sudo rm -rf ./deploy/docker/volumes/cassandra-seed/*
-	sudo rm -rf ./deploy/docker/volumes/cassandra-node/*
+	sudo rm -rf ./deploy/docker/volumes/airflow/*
+	sudo rm -rf ./deploy/docker/volumes/postgres/*
 	sudo rm -rf ./deploy/docker/volumes/kafka/*
 	sudo rm -rf ./deploy/docker/volumes/zookeeper/*
 
 setup-env:
 	bash scripts/setup-env.sh
+
+get-uid-gid-airflow:
+	bash scripts/get-uid-gid-airflow.sh
