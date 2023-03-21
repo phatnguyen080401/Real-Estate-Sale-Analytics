@@ -83,6 +83,5 @@ CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.pickup_dropoff (
 CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.user_per_payment (
     vendor_id FLOAT,
     payment_type FLOAT,
-    created_at TIMESTAMP_NTZ(9),
-    PRIMARY KEY (id)
+    created_at TIMESTAMP_NTZ(9)
 );
