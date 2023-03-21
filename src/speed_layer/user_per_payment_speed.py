@@ -75,7 +75,7 @@ class SpeedUserPerPayment:
         parse_df = batch_df.rdd.map(lambda x: SpeedUserPerPayment.parse(json.loads(x.value))).toDF(schema)
         parse_df = parse_df \
                     .withColumn("created_at", lit(datetime.now())) \
-                    .withColumn("id", uuid_generator())
+                    # .withColumn("id", uuid_generator())
 
         parse_df \
             .write \

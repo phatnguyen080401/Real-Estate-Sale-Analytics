@@ -77,7 +77,7 @@ class SpeedTotalTripDistance:
                     .withColumn("tpep_pickup_datetime", col("tpep_pickup_datetime").cast("timestamp")) \
                     .withColumn("tpep_dropoff_datetime", col("tpep_dropoff_datetime").cast("timestamp")) \
                     .withColumn("created_at", lit(datetime.now())) \
-                    .withColumn("id", uuid_generator())
+                    # .withColumn("id", uuid_generator())
 
         parse_df \
             .write \

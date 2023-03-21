@@ -58,8 +58,8 @@ class BatchTotalPassenger:
                       .write \
                       .format("snowflake") \
                       .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "nyc_lake") \
-                      .option("dbtable", "data_lake") \
+                      .option("sfSchema", "YELLOW_TAXI_BATCH") \
+                      .option("dbtable", "TOTAL_PASSENGER") \
                       .mode("append") \
                       .save()
 
@@ -74,8 +74,8 @@ class BatchTotalPassenger:
                   .read \
                   .format("snowflake") \
                   .options(**SNOWFLAKE_OPTIONS) \
-                  .option("sfSchema", "YELLOW_TAXI_BATCH") \
-                  .option("dbtable", "TOTAL_PASSENGER") \
+                  .option("sfSchema", "nyc_lake") \
+                  .option("dbtable", "data_lake") \
                   .load()
 
       self.save_to_snowflake(df)
