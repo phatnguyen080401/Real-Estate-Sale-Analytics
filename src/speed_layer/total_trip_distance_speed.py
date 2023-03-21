@@ -16,8 +16,14 @@ from logger.logger import Logger
 KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
 KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
 
-CLUSTER_ENDPOINT = "{0}:{1}".format(config['CASSANDRA']['CLUSTER_HOST'], config['CASSANDRA']['CLUSTER_PORT'])
-CLUSTER_KEYSPACE = config['CASSANDRA']['CLUSTER_KEYSPACE']
+SNOWFLAKE_OPTIONS = {
+    "sfURL" : config['SNOWFLAKE']['URL'],
+    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
+    "sfUser" : config['SNOWFLAKE']['USER'],
+    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
+    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
+    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
+}
 
 logger = Logger('Speed-Total-Trip-Distance')
 
@@ -27,8 +33,10 @@ class SpeedTotalTripDistance:
             .builder \
             .master("local[*]") \
             .appName("Speed-Total-Trip-Distance") \
-            .config("spark.cassandra.connection.host", CLUSTER_ENDPOINT) \
-            .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0,com.datastax.spark:spark-cassandra-connector_2.12:3.1.0") \
+            .format("snowflake") \
+                      .options(**SNOWFLAKE_OPTIONS) \
+                      .option("sfSchema", "nyc_lake") \
+                      .option("dbtable", "data_lake") \
             .getOrCreate()
     
     self._spark.sparkContext.setLogLevel("ERROR")
@@ -52,7 +60,7 @@ class SpeedTotalTripDistance:
 
     return df
 
-  def save_to_cassandra(self, batch_df, batch_id):
+  def save_to_snowflake(self, batch_df, batch_id):
     schema = StructType([
                   StructField("tpep_pickup_datetime", StringType(), True),
                   StructField("tpep_dropoff_datetime", StringType(), True),
@@ -69,12 +77,14 @@ class SpeedTotalTripDistance:
                     .withColumn("tpep_pickup_datetime", col("tpep_pickup_datetime").cast("timestamp")) \
                     .withColumn("tpep_dropoff_datetime", col("tpep_dropoff_datetime").cast("timestamp")) \
                     .withColumn("created_at", lit(datetime.now())) \
-                    .withColumn("id", uuid_generator())
+                    # .withColumn("id", uuid_generator())
 
         parse_df \
             .write \
-            .format("org.apache.spark.sql.cassandra") \
-            .options(table="total_trip_distance_speed", keyspace=CLUSTER_KEYSPACE) \
+            .format("snowflake") \
+                      .options(**SNOWFLAKE_OPTIONS) \
+                      .option("sfSchema", "YELLOW_TAXI_SPEED") \
+                      .option("dbtable", "TOTAL_TRIP_DISTANCE") \
             .mode("append") \
             .save()
 
@@ -102,7 +112,7 @@ class SpeedTotalTripDistance:
 
       stream = df \
             .writeStream \
-            .foreachBatch(self.save_to_cassandra) \
+            .foreachBatch(self.save_to_snowflake) \
             .outputMode("append") \
             .start()
 
