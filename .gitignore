@@ -10,6 +10,7 @@ __pycache__/
 env/
 venv/
 
+# Customize
 /deploy/docker/
 /src/logs/*.log
 config.ini

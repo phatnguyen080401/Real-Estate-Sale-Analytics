@@ -18,3 +18,5 @@ taking advantage of both batch and stream processing methods. Besides, we also a
    * Adjust some basic value in `config.ini`
 2. **Virtual environment**
    * Setup environment: `make setup-env`
+3. **Get UID and GID of Airflow**
+   * Run this command: `make get-uid-gid-airflow`
