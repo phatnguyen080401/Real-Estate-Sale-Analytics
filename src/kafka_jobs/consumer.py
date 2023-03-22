@@ -47,7 +47,7 @@ class Consumer:
             .format("kafka") \
             .option("kafka.bootstrap.servers", KAFKA_ENDPOINT) \
             .option("subscribe", KAFKA_TOPIC) \
-            .option("startingOffsets", "latest") \
+            .option("startingOffsets", "earliest") \
             .option("kafka.group.id", "consumer_group") \
             .load()
 
@@ -86,8 +86,7 @@ class Consumer:
       records = batch_df.count()
 
       parse_df = batch_df.rdd \
-                          .filter(lambda x: len(json.loads(x.value)) == 19) \
-                          .map(lambda x: json.loads(x.value)) \
+                          .map(lambda x: Consumer.fill_na(json.loads(x.value))) \
                           .toDF(schema)
       parse_df = parse_df \
                     .withColumn("created_at", lit(datetime.now())) \
@@ -110,6 +109,24 @@ class Consumer:
     except Exception as e:
       logger.error(e)
 
+  @staticmethod
+  def fill_na(raw_data):
+    '''
+      Fill null to missing column
+    '''
+
+    columns = [
+                "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime", "trip_distance", "PULocationID", "DOLocationID", 
+                "payment_type", "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount", "improvement_surcharge",
+                "total_amount", "ratecode_id", "store_and_fwd_flag", "payment_type", "passenger_count", "congestion_surcharge", "airport_fee"
+              ]
+
+    for column in columns:
+      if column not in raw_data:
+        raw_data[column] = None
+
+    return raw_data
+  
   def run(self):
     try:
       df = self.comsume_from_kafka()
