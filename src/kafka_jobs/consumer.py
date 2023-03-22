@@ -47,7 +47,7 @@ class Consumer:
             .format("kafka") \
             .option("kafka.bootstrap.servers", KAFKA_ENDPOINT) \
             .option("subscribe", KAFKA_TOPIC) \
-            .option("startingOffsets", "earliest") \
+            .option("startingOffsets", "latest") \
             .option("kafka.group.id", "consumer_group") \
             .load()
 
