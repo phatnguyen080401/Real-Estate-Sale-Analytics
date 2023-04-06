@@ -41,7 +41,9 @@ class BatchTotalPassenger:
     try:
       total_rides = batch_df.count()
 
-      passenger_df = batch_df \
+      drop_null_row_df = batch_df.na.drop()
+
+      passenger_df = drop_null_row_df \
                             .select(col("passenger_count")) \
                             .agg({'passenger_count': 'sum'}) \
                             .toDF("total_passenger")
@@ -58,13 +60,13 @@ class BatchTotalPassenger:
                       .write \
                       .format("snowflake") \
                       .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "YELLOW_TAXI_BATCH") \
-                      .option("dbtable", "TOTAL_PASSENGER") \
+                      .option("sfSchema", "yellow_taxi_batch") \
+                      .option("dbtable", "total_passenger") \
                       .mode("append") \
                       .save()
 
       total_passenger = total_passenger_df.collect()[0][0]
-      logger.info(f"Save to total_passenger_batch ({total_passenger}, {total_rides})")
+      logger.info(f"Save to table yellow_taxi_batch.total_passenger ({total_passenger}, {total_rides})")
     except Exception as e:
       logger.error(e)
 
@@ -77,7 +79,8 @@ class BatchTotalPassenger:
                   .option("sfSchema", "nyc_lake") \
                   .option("dbtable", "data_lake") \
                   .load()
-
+      
+      logger.info(f"Read data from table nyc_lake.data_lake")
       self.save_to_snowflake(df)
     except Exception as e:
       logger.error(e)

@@ -40,8 +40,10 @@ class BatchTotalAmount:
   def save_to_snowflake(self, batch_df):
     try:
       total_rides = batch_df.count()
+      
+      drop_null_row_df = batch_df.na.drop()
 
-      total_amount_df = batch_df \
+      total_amount_df = drop_null_row_df \
                             .select(col("total_amount")) \
                             .agg({'total_amount': 'sum'}) \
                             .toDF("total_amount")
@@ -58,13 +60,13 @@ class BatchTotalAmount:
                       .write \
                       .format("snowflake") \
                       .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "YELLOW_TAXI_BATCH") \
-                      .option("dbtable", "TOTAL_AMOUNT") \
+                      .option("sfSchema", "yellow_taxi_batch") \
+                      .option("dbtable", "total_amount") \
                       .mode("append") \
                       .save()
 
       total_amount = total_total_amount_df.collect()[0][0]
-      logger.info(f"Save to total_amount_batch ({total_amount}, {total_rides})")
+      logger.info(f"Save to table yellow_taxi_batch.total_amount ({total_amount}, {total_rides})")
     except Exception as e:
       logger.error(e)
 
@@ -77,7 +79,8 @@ class BatchTotalAmount:
                   .option("sfSchema", "nyc_lake") \
                   .option("dbtable", "data_lake") \
                   .load()
-
+      
+      logger.info(f"Read data from table nyc_lake.data_lake")
       self.save_to_snowflake(df)
     except Exception as e:
       logger.error(e)
