@@ -2,7 +2,6 @@ import sys
 sys.path.append(".")
 
 import json
-import uuid
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
@@ -63,51 +62,50 @@ class SpeedTotalPassenger:
 
   def save_to_snowflake(self, batch_df, batch_id):
     schema = StructType([
-                  StructField("tpep_pickup_datetime", StringType(), True),
-                  StructField("tpep_dropoff_datetime", StringType(), True),
-                  StructField("passenger_count", DoubleType(), True),
+                  StructField("passenger_count", DoubleType(), True)
           ])
 
     try:
-        records = batch_df.count()
-
-        uuid_generator = udf(lambda: str(uuid.uuid4()), StringType())
+        total_rides = batch_df.count()
         
-        parse_df = batch_df.rdd.map(lambda x: SpeedTotalPassenger.parse(json.loads(x.value))).toDF(schema)
-        parse_df = parse_df \
-                    .withColumn("tpep_pickup_datetime", col("tpep_pickup_datetime").cast("timestamp")) \
-                    .withColumn("tpep_dropoff_datetime", col("tpep_dropoff_datetime").cast("timestamp")) \
-                    .withColumn("created_at", lit(datetime.now())) \
-                    # .withColumn("id", uuid_generator())
+        parse_df = batch_df.rdd \
+                            .map(lambda x: SpeedTotalPassenger.parse(json.loads(x.value))) \
+                            .toDF(schema)
+        
+        drop_null_row_df = parse_df.na.drop()
+        
+        total_passenger_df = drop_null_row_df \
+                            .select(col("passenger_count")) \
+                            .agg({'passenger_count': 'sum'}) \
+                            .toDF("passenger_count")
+        
+        total_passenger_df = total_passenger_df \
+                            .select("*") \
+                            .withColumn("total_rides", lit(total_rides)) \
+                            .withColumn("created_at", lit(datetime.now())) \
 
-        parse_df \
+        total_passenger_df \
             .write \
             .format("snowflake") \
-                      .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "YELLOW_TAXI_SPEED") \
-                      .option("dbtable", "TOTAL_PASSENGER") \
+            .options(**SNOWFLAKE_OPTIONS) \
+            .option("sfSchema", "YELLOW_TAXI_SPEED") \
+            .option("dbtable", "TOTAL_PASSENGER") \
             .mode("append") \
             .save()
+        
+        total_passenger = total_passenger_df.collect()[0][0]
 
-        logger.info(f"Save to table: total_passenger_speed ({records} records)")
+        logger.info(f"Save to table yellow_taxi_speed.total_passenger ({total_passenger}, {total_rides})")
     except Exception as e:
       logger.error(e)
 
   @staticmethod
   def parse(raw_data):
-    tpep_pickup_datetime = raw_data["tpep_pickup_datetime"]
-    tpep_dropoff_datetime = raw_data["tpep_dropoff_datetime"]
+    passenger_count = raw_data["passenger_count"] if "passenger_count" in raw_data else None
 
-    if "passenger_count" in raw_data:
-      passenger_count = raw_data["passenger_count"]
-    else:
-      passenger_count = None
-
-    data = {
-              'tpep_pickup_datetime': tpep_pickup_datetime,
-              'tpep_dropoff_datetime': tpep_dropoff_datetime, 
+    data = { 
               'passenger_count': passenger_count
-            }
+           }
 
     return data
 

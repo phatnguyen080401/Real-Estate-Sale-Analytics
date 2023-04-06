@@ -2,7 +2,6 @@ import sys
 sys.path.append(".")
 
 import json
-import uuid
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
@@ -69,31 +68,33 @@ class SpeedUserPerPayment:
 
     try:
         records = batch_df.count()
-
-        uuid_generator = udf(lambda: str(uuid.uuid4()), StringType())
         
-        parse_df = batch_df.rdd.map(lambda x: SpeedUserPerPayment.parse(json.loads(x.value))).toDF(schema)
-        parse_df = parse_df \
-                    .withColumn("created_at", lit(datetime.now())) \
-                    # .withColumn("id", uuid_generator())
+        parse_df = batch_df.rdd \
+                            .map(lambda x: SpeedUserPerPayment.parse(json.loads(x.value))) \
+                            .toDF(schema)
+        
+        drop_null_row_df = parse_df.na.drop()
+        
+        user_per_payment_df = drop_null_row_df \
+                            .withColumn("created_at", lit(datetime.now())) \
 
-        parse_df \
+        user_per_payment_df \
             .write \
             .format("snowflake") \
-                      .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "YELLOW_TAXI_SPEED") \
-                      .option("dbtable", "USER_PER_PAYMENT") \
+            .options(**SNOWFLAKE_OPTIONS) \
+            .option("sfSchema", "YELLOW_TAXI_SPEED") \
+            .option("dbtable", "USER_PER_PAYMENT") \
             .mode("append") \
             .save()
 
-        logger.info(f"Save to table: user_per_payment_speed ({records} records)")
+        logger.info(f"Save to table yellow_taxi_speed.user_per_payment ({records} records)")
     except Exception as e:
       logger.error(e)
 
   @staticmethod
   def parse(raw_data):
-    vendor_id = raw_data["VendorID"]
-    payment_type = raw_data["payment_type"]
+    vendor_id = raw_data["VendorID"] if "VendorID" in raw_data else None
+    payment_type = raw_data["payment_type"] if "payment_type" in raw_data else None
 
     data = {
               'vendor_id': vendor_id,

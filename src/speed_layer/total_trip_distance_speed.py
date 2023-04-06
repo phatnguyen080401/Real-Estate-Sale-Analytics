@@ -2,7 +2,6 @@ import sys
 sys.path.append(".")
 
 import json
-import uuid
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
@@ -33,10 +32,11 @@ class SpeedTotalTripDistance:
             .builder \
             .master("local[*]") \
             .appName("Speed-Total-Trip-Distance") \
-            .format("snowflake") \
-                      .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "nyc_lake") \
-                      .option("dbtable", "data_lake") \
+            .config("spark.jars.packages", 
+                    "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0," +
+                    "net.snowflake:snowflake-jdbc:3.13.14," + 
+                    "net.snowflake:spark-snowflake_2.12:2.11.0-spark_3.2"
+                  ) \
             .getOrCreate()
     
     self._spark.sparkContext.setLogLevel("ERROR")
@@ -62,47 +62,51 @@ class SpeedTotalTripDistance:
 
   def save_to_snowflake(self, batch_df, batch_id):
     schema = StructType([
-                  StructField("tpep_pickup_datetime", StringType(), True),
-                  StructField("tpep_dropoff_datetime", StringType(), True),
-                  StructField("trip_distance", DoubleType(), True),
+                  StructField("trip_distance", DoubleType(), True)
           ])
 
     try:
-        records = batch_df.count()
+        total_rides = batch_df.count()
         
-        uuid_generator = udf(lambda: str(uuid.uuid4()), StringType())
+        parse_df = batch_df.rdd \
+                            .map(lambda x: SpeedTotalTripDistance.parse(json.loads(x.value))) \
+                            .toDF(schema)
+        
+        drop_null_row_df = parse_df.na.drop()
+        
+        total_trip_distance_df = drop_null_row_df \
+                            .select(col("trip_distance")) \
+                            .agg({'trip_distance': 'sum'}) \
+                            .toDF("trip_distance")
+        
+        total_trip_distance_df = total_trip_distance_df \
+                            .select("*") \
+                            .withColumn("total_rides", lit(total_rides)) \
+                            .withColumn("created_at", lit(datetime.now())) \
 
-        parse_df = batch_df.rdd.map(lambda x: SpeedTotalTripDistance.parse(json.loads(x.value))).toDF(schema)
-        parse_df = parse_df \
-                    .withColumn("tpep_pickup_datetime", col("tpep_pickup_datetime").cast("timestamp")) \
-                    .withColumn("tpep_dropoff_datetime", col("tpep_dropoff_datetime").cast("timestamp")) \
-                    .withColumn("created_at", lit(datetime.now())) \
-                    # .withColumn("id", uuid_generator())
-
-        parse_df \
+        total_trip_distance_df \
             .write \
             .format("snowflake") \
-                      .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "YELLOW_TAXI_SPEED") \
-                      .option("dbtable", "TOTAL_TRIP_DISTANCE") \
+            .options(**SNOWFLAKE_OPTIONS) \
+            .option("sfSchema", "YELLOW_TAXI_SPEED") \
+            .option("dbtable", "TRIP_DISTANCE") \
             .mode("append") \
             .save()
 
-        logger.info(f"Save to table: total_trip_distance_speed ({records} records)")
+        total_trip_distance = total_trip_distance_df.collect()[0][0]
+
+        logger.info(f"Save to table yellow_taxi_speed.trip_distance ({total_trip_distance}, {total_rides})")
+        
     except Exception as e:
       logger.error(e)
 
   @staticmethod
   def parse(raw_data):
-    tpep_pickup_datetime = raw_data["tpep_pickup_datetime"]
-    tpep_dropoff_datetime = raw_data["tpep_dropoff_datetime"]
-    trip_distance = raw_data["trip_distance"]
+    trip_distance = raw_data["trip_distance"] if "trip_distance" in raw_data else None
 
-    data = {
-              'tpep_pickup_datetime': tpep_pickup_datetime,
-              'tpep_dropoff_datetime': tpep_dropoff_datetime, 
+    data = { 
               'trip_distance': trip_distance
-            }
+           }
 
     return data
 
