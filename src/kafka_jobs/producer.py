@@ -16,6 +16,13 @@ KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAF
 logger = Logger("Kafka-Producer")
 
 class Producer:
+  '''
+    Ingest data from folder data containing mulptiple parquet file by Spark Streaming and store into Kafka's topic 
+
+    Folder: data
+  '''
+
+
   def __init__(self):
     self._spark = SparkSession \
             .builder \

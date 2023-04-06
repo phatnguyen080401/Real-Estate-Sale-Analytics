@@ -26,6 +26,14 @@ SNOWFLAKE_OPTIONS = {
 logger = Logger('Kafka-Consumer')
 
 class Consumer:
+  '''
+    Consume data from Kafka's topic and store into Snowflake 
+
+    Database: nyc_db
+    Schema: nyc_lake
+    Table: data_lake
+  '''
+
   def __init__(self):
     self._spark = SparkSession \
             .builder \
