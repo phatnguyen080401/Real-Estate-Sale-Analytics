@@ -27,6 +27,6 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, schedule="
         bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_trip_distance_batch.py"
     )
 
-    end = EmptyOperator(task_id="none", trigger_rule='all_success')
+    end = EmptyOperator(task_id="done", trigger_rule='all_success')
 
     (total_amount_batch,total_passenger_batch,total_trip_distance_batch) >> end

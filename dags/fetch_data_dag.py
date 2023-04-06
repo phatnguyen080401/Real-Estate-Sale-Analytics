@@ -89,4 +89,4 @@ with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule=ti
 
     move_file_to_folder_data >> point_to_next_file
     download_new_file >> split_file_to_partitions
-    folder_is_empty_or_not >> [move_file_to_folder_data, download_new_file]
+    folder_is_empty_or_not >> (move_file_to_folder_data, download_new_file)
