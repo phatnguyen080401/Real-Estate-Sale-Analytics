@@ -72,6 +72,8 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+  networks:
+    - kafka-airflow
 
 services:
   postgres:
@@ -89,6 +91,8 @@ services:
       interval: 5s
       retries: 5
     restart: always
+    networks:
+    - kafka-airflow
 
   redis:
     container_name: redis
@@ -101,6 +105,8 @@ services:
       timeout: 30s
       retries: 50
     restart: always
+    networks:
+    - kafka-airflow
 
   airflow-webserver:
     <<: *airflow-common
@@ -285,3 +291,7 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+  
+networks:
+  kafka-airflow:
+    external: true

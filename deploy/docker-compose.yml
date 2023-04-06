@@ -9,7 +9,7 @@ services:
     volumes:
       - ./docker/volumes/zookeeper/data:/opt/zookeeper-3.4.13/data
     networks:
-      - kafka
+      - kafka-airflow
 
   kafka:
     container_name: kafka
@@ -31,8 +31,9 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - kafka
+      - kafka-airflow
 
 networks:
-  kafka:
+  kafka-airflow:
+    external: true
   
