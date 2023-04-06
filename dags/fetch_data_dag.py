@@ -1,9 +1,6 @@
-import sys
-sys.path.append("..")
-
 import os
 from datetime import datetime, timedelta
-from src.custom_functions import download_file, split_file, move_file
+from custom_functions import download_file, split_file, move_file
 
 from airflow import DAG
 from airflow.models import Variable
@@ -42,7 +39,12 @@ def get_variables():
     file_number = int(Variable.get("FILE_NUMBER"))
     partition = int(Variable.get("PARTITION"))
 
-    return {'year': year, 'month': month, 'file_number': file_number, 'partition': partition}
+    return {
+            'year': year, 
+            'month': month, 
+            'file_number': file_number, 
+            'partition': partition
+            }
 
 # Check if folder tmp is empty or not
 def folder_is_empty():
