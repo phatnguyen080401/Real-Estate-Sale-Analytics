@@ -76,7 +76,7 @@ CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.pickup_dropoff (
     pu_location_id FLOAT,
     do_location_id FLOAT,
     created_at TIMESTAMP_NTZ(9)
-);
+) CLUSTER BY (created_at);
 
 -- schema: yellow_taxi_speed
 -- table: user_per_payment
@@ -84,31 +84,28 @@ CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.user_per_payment (
     vendor_id FLOAT,
     payment_type FLOAT,
     created_at TIMESTAMP_NTZ(9)
-);
+) CLUSTER BY (created_at);
 
 -- schema: yellow_taxi_speed
 -- table: total_amount
 CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_amount (
-    tpep_pickup_datetime TIMESTAMP_NTZ(9),
-    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
     total_amount FLOAT,
+    total_rides BIGINT,
     created_at TIMESTAMP_NTZ(9)
-);
+) CLUSTER BY (created_at);
 
 -- schema: yellow_taxi_speed
 -- table: total_trip_distance
 CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_trip_distance (
-    tpep_pickup_datetime TIMESTAMP_NTZ(9),
-    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
-    trip_distance FLOAT,
+    total_trip_distance FLOAT,
+    total_rides BIGINT,
     created_at TIMESTAMP_NTZ(9)
-);
+) CLUSTER BY (created_at);
 
 -- schema: yellow_taxi_speed
 -- table: total_passenger
 CREATE OR REPLACE TABLE nyc_db.yellow_taxi_speed.total_passenger (
-    tpep_pickup_datetime TIMESTAMP_NTZ(9),
-    tpep_dropoff_datetime TIMESTAMP_NTZ(9),
-    passenger_count FLOAT,
+    total_passenger FLOAT,
+    total_rides BIGINT,
     created_at TIMESTAMP_NTZ(9)
-);
+) CLUSTER BY (created_at);
