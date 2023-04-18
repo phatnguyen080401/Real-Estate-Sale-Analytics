@@ -261,7 +261,7 @@ cython_debug/
 
 ## Customized
 /src/logs/*.log
-config.template.ini
+/src/config.template.ini
 checkpoint/
 
 test.py
