@@ -1,4 +1,4 @@
-import os
+import glob
 from datetime import datetime, timedelta
 from custom_functions import download_file, split_file, move_file
 
@@ -48,11 +48,11 @@ def get_variables():
 
 # Check if folder tmp is empty or not
 def folder_is_empty():
-    if not os.listdir("/opt/airflow/src/tmp"):
+    if not glob.glob("/opt/airflow/src/tmp/*.parquet"):
         return "download_file"
     return "move_file_to_folder_data"
 
-with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule=timedelta(seconds=30)):
+with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule="*/1 * * * *"):
     variables_dict = get_variables()
 
     # Check if the folder is empty or not
