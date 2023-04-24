@@ -11,7 +11,7 @@ default_args = {
     'retries': 0
 }
 
-with DAG('batch_layer_dag', default_args=default_args, catchup=False, schedule="*/10 * * * *") as dag:
+with DAG('batch_layer_dag', default_args=default_args, catchup=False, schedule="*/20 * * * *") as dag:
     total_amount_batch = BashOperator(
         task_id="total_amount_batch",
         bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_amount_batch.py"
