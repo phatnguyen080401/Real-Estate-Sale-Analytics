@@ -47,25 +47,20 @@ class Producer:
 
   def read_file(self):
     schema = StructType([
-                  StructField("VendorID", LongType(), True),
-                  StructField("tpep_pickup_datetime", TimestampType(), True),
-                  StructField("tpep_dropoff_datetime", TimestampType(), True),
-                  StructField("passenger_count", DoubleType(), True),
-                  StructField("trip_distance", DoubleType(), True),
-                  StructField("RatecodeID", DoubleType(), True),
-                  StructField("store_and_fwd_flag", StringType(), True),
-                  StructField("PULocationID", LongType(), True),
-                  StructField("DOLocationID", LongType(), True),
-                  StructField("payment_type", LongType(), True),
-                  StructField("fare_amount", DoubleType(), True),
-                  StructField("extra", DoubleType(), True),
-                  StructField("mta_tax", DoubleType(), True),
-                  StructField("tip_amount", DoubleType(), True),
-                  StructField("tolls_amount", DoubleType(), True),
-                  StructField("improvement_surcharge", DoubleType(), True),
-                  StructField("total_amount", DoubleType(), True),
-                  StructField("congestion_surcharge", DoubleType(), True),
-                  StructField("airport_fee", DoubleType(), True)
+                  StructField("serial_number", LongType(), True),
+                  StructField("list_year", LongType(), True),
+                  StructField("date_recorded", DateType(), True),
+                  StructField("town", StringType(), True),
+                  StructField("address", StringType(), True),
+                  StructField("assessed_value", DoubleType(), True),
+                  StructField("sale_amount", DoubleType(), True),
+                  StructField("sales_ratio", DoubleType(), True),
+                  StructField("property_type", StringType(), True),
+                  StructField("residential_type", StringType(), True),
+                  StructField("non_use_code", StringType(), True),
+                  StructField("assessor_remarks", StringType(), True),
+                  StructField("opm_remarks", StringType(), True),
+                  StructField("location", StringType(), True),
           ])
 
     try:
