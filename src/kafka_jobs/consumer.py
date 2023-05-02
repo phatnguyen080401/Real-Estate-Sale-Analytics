@@ -29,8 +29,8 @@ class Consumer:
   '''
     Consume data from Kafka's topic and store into Snowflake 
 
-    Database: nyc_db
-    Schema: nyc_lake
+    Database: sale_db
+    Schema: sale_lake
     Table: data_lake
   '''
 
@@ -69,25 +69,20 @@ class Consumer:
 
   def save_to_data_lake(self, batch_df, batch_id):
     schema = StructType([
-                  StructField("VendorID", IntegerType(), True),
-                  StructField("tpep_pickup_datetime", StringType(), True),
-                  StructField("tpep_dropoff_datetime", StringType(), True),
-                  StructField("passenger_count", DoubleType(), True),
-                  StructField("trip_distance", DoubleType(), True),
-                  StructField("RatecodeID", DoubleType(), True),
-                  StructField("store_and_fwd_flag", StringType(), True),
-                  StructField("PULocationID", IntegerType(), True),
-                  StructField("DOLocationID", IntegerType(), True),
-                  StructField("payment_type", LongType(), True),
-                  StructField("fare_amount", DoubleType(), True),
-                  StructField("extra", DoubleType(), True),
-                  StructField("mta_tax", DoubleType(), True),
-                  StructField("tip_amount", DoubleType(), True),
-                  StructField("tolls_amount", DoubleType(), True),
-                  StructField("improvement_surcharge", DoubleType(), True),
-                  StructField("total_amount", DoubleType(), True),
-                  StructField("congestion_surcharge", DoubleType(), True),
-                  StructField("airport_fee", DoubleType(), True)
+                  StructField("serial_number", LongType(), True),
+                  StructField("list_year", LongType(), True),
+                  StructField("date_recorded", StringType(), True),
+                  StructField("town", StringType(), True),
+                  StructField("address", StringType(), True),
+                  StructField("assessed_value", DoubleType(), True),
+                  StructField("sale_amount", DoubleType(), True),
+                  StructField("sales_ratio", DoubleType(), True),
+                  StructField("property_type", StringType(), True),
+                  StructField("residential_type", StringType(), True),
+                  StructField("non_use_code", StringType(), True),
+                  StructField("assessor_remarks", StringType(), True),
+                  StructField("opm_remarks", StringType(), True),
+                  StructField("location", StringType(), True),
           ])
 
     try:
@@ -96,18 +91,16 @@ class Consumer:
       parse_df = batch_df.rdd \
                           .map(lambda x: Consumer.fill_na(json.loads(x.value))) \
                           .toDF(schema)
+      
       parse_df = parse_df \
-                    .withColumn("created_at", lit(datetime.now())) \
-                    .withColumnRenamed("VendorID","vendor_id") \
-                    .withColumnRenamed("RatecodeID","ratecode_id") \
-                    .withColumnRenamed("PULocationID","pu_location_id") \
-                    .withColumnRenamed("DOLocationID","do_location_id")
+                    .withColumn("date_recorded", to_date(col("date_recorded"))) \
+                    .withColumn("created_at", lit(datetime.now()))
 
       parse_df \
           .write \
           .format("snowflake") \
           .options(**SNOWFLAKE_OPTIONS) \
-          .option("sfSchema", "nyc_lake") \
+          .option("sfSchema", "sale_lake") \
           .option("dbtable", "data_lake") \
           .options(header=True) \
           .mode("append") \
@@ -124,9 +117,9 @@ class Consumer:
     '''
 
     columns = [
-                "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime", "trip_distance", "PULocationID", "DOLocationID", 
-                "payment_type", "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount", "improvement_surcharge",
-                "total_amount", "ratecode_id", "store_and_fwd_flag", "payment_type", "passenger_count", "congestion_surcharge", "airport_fee"
+                "serial_number", "list_year", "date_recorded", "town", "address", "assessed_value", "sale_amount",
+                "sales_ratio", "property_type", "residential_type", "non_use_code", "assessor_remarks", "opm_remarks",
+                "location"
               ]
 
     for column in columns:
