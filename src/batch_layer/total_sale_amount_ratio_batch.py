@@ -20,14 +20,14 @@ SNOWFLAKE_OPTIONS = {
     "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
 }
 
-logger = Logger('Batch-Total-Amount')
+logger = Logger('Batch-Total-Sale-Amount-Ratio')
 
-class BatchTotalAmount:
+class BatchTotalSaleAmountRatio:
   def __init__(self):
     self._spark = SparkSession \
             .builder \
             .master("local[*]") \
-            .appName("Batch-Total-Amount") \
+            .appName("Batch-Total-Sale-Amount-Ratio") \
             .config("spark.jars.packages", 
                     "org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0," +
                     "net.snowflake:snowflake-jdbc:3.13.14," + 
@@ -39,34 +39,43 @@ class BatchTotalAmount:
 
   def save_to_snowflake(self, batch_df):
     try:
-      total_rides = batch_df.count()
-      
-      drop_null_row_df = batch_df.na.drop()
+      started_at = datetime.now()
 
-      total_amount_df = drop_null_row_df \
-                            .select(col("total_amount")) \
-                            .agg({'total_amount': 'sum'}) \
-                            .toDF("total_amount")
+      df = batch_df.select(col("sale_amount"), col("sales_ratio"))
 
-      total_total_amount_df = total_amount_df \
-                                    .withColumn("total_rides", lit(total_rides)) \
-                                    .withColumn("started_at", lit(datetime.now())) \
+      drop_null_row_df = df.na.drop()
+
+      total_customer = drop_null_row_df.count()
+
+      total_sale_amount_ratio_df = drop_null_row_df \
+                                        .agg({
+                                              'sale_amount': 'sum',
+                                              'sales_ratio': 'sum'
+                                              }) \
+                                        .toDF("total_sale_amount", "total_sale_ratio") \
+                                        .withColumn("total_customer", lit(total_customer)) 
 
       time.sleep(300)
 
-      total_total_amount_df = total_total_amount_df.withColumn("ended_at", lit(datetime.now()))
+      ended_at = datetime.now()
 
-      total_total_amount_df \
+      total_sale_amount_ratio_df = total_sale_amount_ratio_df \
+                                            .withColumn("started_at", lit(started_at)) \
+                                            .withColumn("ended_at", lit(ended_at))
+
+      total_sale_amount_ratio_df \
                       .write \
                       .format("snowflake") \
                       .options(**SNOWFLAKE_OPTIONS) \
-                      .option("sfSchema", "yellow_taxi_batch") \
-                      .option("dbtable", "total_amount") \
+                      .option("sfSchema", "sale_batch") \
+                      .option("dbtable", "total_sale_amount_ratio") \
                       .mode("append") \
                       .save()
 
-      total_amount = total_total_amount_df.collect()[0][0]
-      logger.info(f"Save to table yellow_taxi_batch.total_amount ({total_amount}, {total_rides})")
+      total_sale_amount = total_sale_amount_ratio_df.collect()[0][0]
+      total_sale_ratio = total_sale_amount_ratio_df.collect()[0][1]
+
+      logger.info(f"Save to table sale_batch.total_sale_amount_ratio ({total_sale_amount}, {total_sale_ratio}, {total_customer})")
     except Exception as e:
       logger.error(e)
 
@@ -76,14 +85,14 @@ class BatchTotalAmount:
                   .read \
                   .format("snowflake") \
                   .options(**SNOWFLAKE_OPTIONS) \
-                  .option("sfSchema", "nyc_lake") \
+                  .option("sfSchema", "sale_lake") \
                   .option("dbtable", "data_lake") \
                   .load()
       
-      logger.info(f"Read data from table nyc_lake.data_lake")
+      logger.info(f"Read data from table sale_lake.data_lake")
       self.save_to_snowflake(df)
     except Exception as e:
       logger.error(e)
       
 if __name__ == '__main__':
-  BatchTotalAmount().run()
+  BatchTotalSaleAmountRatio().run()
