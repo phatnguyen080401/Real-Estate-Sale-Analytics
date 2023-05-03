@@ -1,6 +1,6 @@
 import glob
 from datetime import datetime, timedelta
-from custom_functions import download_file, split_file, move_file
+from custom_functions import download_file, split_file, move_file, convert_to_parquet, adjust_dataframe
 
 from airflow import DAG
 from airflow.models import Variable
@@ -15,33 +15,22 @@ default_args = {
 }
 
 # Default variable in Airflow UI (Admin -> Variables)
-Variable.setdefault("YEAR", 2022)
-Variable.setdefault("MONTH", 1)
 Variable.setdefault("FILE_NUMBER", 0)
-Variable.setdefault("PARTITION", 800)
+Variable.setdefault("PARTITION", 4000)
 
 # Set variables
-def set_variables(year, month, file_number, partition, **kwargs):
+def set_variables(file_number, partition, **kwargs):
     if (file_number + 1) == partition:
-        if month == 12:
-            Variable.set("YEAR", year + 1)
-            Variable.set("MONTH", 1)
-        else:
-            Variable.set("MONTH", month + 1)
         Variable.set("FILE_NUMBER", 0)
     else:
         Variable.set("FILE_NUMBER", file_number + 1)
 
 # Get variables
 def get_variables():
-    year = int(Variable.get("YEAR"))
-    month = int(Variable.get("MONTH"))
     file_number = int(Variable.get("FILE_NUMBER"))
     partition = int(Variable.get("PARTITION"))
 
     return {
-            'year': year, 
-            'month': month, 
             'file_number': file_number, 
             'partition': partition
             }
@@ -78,8 +67,19 @@ with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule="*
     # Download next file based on month and year
     download_new_file = PythonOperator(
         task_id="download_file",
-        python_callable=download_file,
-        op_kwargs=variables_dict
+        python_callable=download_file
+    )
+
+    # Convert csv to parquet
+    convert_to_parquet_file = PythonOperator(
+        task_id="convert_to_parquet",
+        python_callable=convert_to_parquet
+    )
+
+    # Change data type object to correct data type
+    change_data_type = PythonOperator(
+        task_id="adjust_dataframe",
+        python_callable=adjust_dataframe
     )
     
     # Split file
@@ -90,5 +90,5 @@ with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule="*
     )
 
     move_file_to_folder_data >> point_to_next_file
-    download_new_file >> split_file_to_partitions
+    download_new_file >> convert_to_parquet_file >> change_data_type >> split_file_to_partitions
     folder_is_empty_or_not >> (move_file_to_folder_data, download_new_file)

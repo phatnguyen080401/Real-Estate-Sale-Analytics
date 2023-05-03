@@ -12,21 +12,21 @@ default_args = {
 }
 
 with DAG('batch_layer_dag', default_args=default_args, catchup=False, schedule="*/20 * * * *") as dag:
-    total_amount_batch = BashOperator(
-        task_id="total_amount_batch",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_amount_batch.py"
+    total_customer_by_property_type_batch = BashOperator(
+        task_id="total_customer_by_property_type_batch",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_customer_by_property_type_batch.py"
     )
 
-    total_passenger_batch = BashOperator(
-        task_id="total_passenger_batch",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_passenger_batch.py"
+    total_customer_by_town_batch = BashOperator(
+        task_id="total_customer_by_town_batch",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_customer_by_town_batch.py"
     )
 
-    total_trip_distance_batch = BashOperator(
-        task_id="total_trip_distance_batch",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_trip_distance_batch.py"
+    total_sale_amount_ratio_batch = BashOperator(
+        task_id="total_sale_amount_ratio_batch",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_sale_amount_ratio_batch.py"
     )
 
     end = EmptyOperator(task_id="done", trigger_rule='all_success')
 
-    (total_amount_batch,total_passenger_batch,total_trip_distance_batch) >> end
+    (total_customer_by_property_type_batch,total_customer_by_town_batch,total_sale_amount_ratio_batch) >> end

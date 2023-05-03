@@ -12,32 +12,22 @@ default_args = {
 }
 
 with DAG('speed_layer_dag', default_args=default_args, catchup=False, schedule='@once') as dag:
-    pickup_dropoff_speed = BashOperator(
-        task_id="pickup_dropoff_speed",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/pickup_dropoff_speed.py"
+    total_customer_by_property_type_speed = BashOperator(
+        task_id="total_customer_by_property_type_speed",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_customer_by_property_type_speed.py"
     )
 
-    user_per_payment_speed = BashOperator(
-        task_id="user_per_payment_speed",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/user_per_payment_speed.py"
+    total_customer_by_town_speed = BashOperator(
+        task_id="total_customer_by_town_speed",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_customer_by_town_speed.py"
     )
 
-    total_amount_speed = BashOperator(
-        task_id="total_amount_speed",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_amount_speed.py"
-    )
-
-    total_passenger_speed = BashOperator(
-        task_id="total_passenger_speed",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_passenger_speed.py"
-    )
-
-    total_trip_distance_speed = BashOperator(
-        task_id="total_trip_distance_speed",
-        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_trip_distance_speed.py"
+    total_sale_amount_ratio_speed = BashOperator(
+        task_id="total_sale_amount_ratio_speed",
+        bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/speed_layer/total_sale_amount_ratio_speed.py"
     )
 
     end = EmptyOperator(task_id="done")
     
-    (pickup_dropoff_speed, user_per_payment_speed, total_amount_speed, total_passenger_speed, total_trip_distance_speed) >> end
+    (total_customer_by_property_type_speed, total_customer_by_town_speed, total_sale_amount_ratio_speed) >> end
     
