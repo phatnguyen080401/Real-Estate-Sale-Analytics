@@ -34,16 +34,16 @@ class Producer:
     self._spark.sparkContext.setLogLevel("ERROR")
     self.topic = []
 
-  def create_topic(self):
-    try:
-      admin_client = KafkaAdminClient(bootstrap_servers=KAFKA_ENDPOINT)
+  # def create_topic(self):
+  #   try:
+  #     admin_client = KafkaAdminClient(bootstrap_servers=KAFKA_ENDPOINT)
 
-      self.topic.append(NewTopic(name=KAFKA_TOPIC, num_partitions=3, replication_factor=1))
-      admin_client.create_topics(new_topics=self.topic, validate_only=False)
+  #     self.topic.append(NewTopic(name=KAFKA_TOPIC, num_partitions=3, replication_factor=1))
+  #     admin_client.create_topics(new_topics=self.topic, validate_only=False)
 
-      logger.info(f"Create topic: {KAFKA_TOPIC}")
-    except TopicAlreadyExistsError as e:
-      logger.error(e)
+  #     logger.info(f"Create topic: {KAFKA_TOPIC}")
+  #   except TopicAlreadyExistsError as e:
+  #     logger.error(e)
 
   def read_file(self):
     schema = StructType([
@@ -77,7 +77,7 @@ class Producer:
     return df
 
   def produce(self):
-    self.create_topic()
+    # self.create_topic()
 
     df = self.read_file()
     cols = df.columns
