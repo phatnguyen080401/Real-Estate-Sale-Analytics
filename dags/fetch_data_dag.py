@@ -41,7 +41,7 @@ def folder_is_empty():
         return "download_file"
     return "move_file_to_folder_data"
 
-with DAG('fetch_data_dag', default_args=default_args, catchup=False, schedule="*/1 * * * *"):
+with DAG('fetch_data_dag', default_args=default_args, catchup=False, max_active_runs=1, schedule="*/1 * * * *"):
     variables_dict = get_variables()
 
     # Check if the folder is empty or not
