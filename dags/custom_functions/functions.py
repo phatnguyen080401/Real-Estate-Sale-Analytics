@@ -53,25 +53,25 @@ def adjust_dataframe():
 
 def split_file(partition, **kwargs):
   schema = pa.schema([
-                    field("Serial Number", int64(), True),
-                    field("List Year", int64(), True),
-                    field("Date Recorded", date64(), True),
-                    field("Town", string(), True),
-                    field("Address", string(), True),
-                    field("Assessed Value", float64(), True),
-                    field("Sale Amount", float64(), True),
-                    field("Sales Ratio", float64(), True),
-                    field("Property Type", string(), True),
-                    field("Residential Type", string(), True),
-                    field("Non Use Code", string(), True),
-                    field("Assessor Remarks", string(), True),
-                    field("OPM remarks", string(), True),
-                    field("Location", string(), True)
+                    field("serial_number", int64(), True),
+                    field("list_year", int64(), True),
+                    field("date_recorded", date64(), True),
+                    field("town", string(), True),
+                    field("address", string(), True),
+                    field("assessed_value", float64(), True),
+                    field("sale_amount", float64(), True),
+                    field("sales_ratio", float64(), True),
+                    field("property_type", string(), True),
+                    field("residential_type", string(), True),
+                    field("non_use_code", string(), True),
+                    field("assessor_remarks", string(), True),
+                    field("opm_remarks", string(), True),
+                    field("location", string(), True)
             ])
 
   name_function = lambda x: f"Real_Estate_Sales-{x}.parquet"
   ddf = dd.read_parquet(f"{AIRFLOW_DIR}/src/data_source/{FILE_NAME}.parquet")
-  sorted_ddf = ddf.sort_values("Date Recorded")
+  sorted_ddf = ddf.sort_values("date_recorded")
   sorted_ddf.repartition(partition).to_parquet(f"{AIRFLOW_DIR}/src/tmp/", name_function=name_function, schema=schema)
 
 def move_file(file_number, **kwargs):
