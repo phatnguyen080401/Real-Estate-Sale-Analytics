@@ -26,7 +26,7 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
       - KAFKA_LISTENERS=INSIDE://0.0.0.0:9092, OUTSIDE://0.0.0.0:9093
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CREATE_TOPICS=real_estate_sales:3:1:compact
+      - KAFKA_CREATE_TOPICS=real_estate_sales:3:1
     volumes:
       - ./docker/volumes/kafka:/kafka/kafka-logs-kafka
     depends_on:
