@@ -52,7 +52,7 @@ class BatchTotalSaleAmountRatio:
                                               'sale_amount': 'sum',
                                               'sales_ratio': 'sum'
                                               }) \
-                                        .toDF("total_sale_amount", "total_sale_ratio") \
+                                        .toDF("total_sale_ratio", "total_sale_amount") \
                                         .withColumn("total_customer", lit(total_customer)) 
 
       time.sleep(300)
@@ -72,8 +72,8 @@ class BatchTotalSaleAmountRatio:
                       .mode("append") \
                       .save()
 
-      total_sale_amount = total_sale_amount_ratio_df.collect()[0][0]
-      total_sale_ratio = total_sale_amount_ratio_df.collect()[0][1]
+      total_sale_ratio = total_sale_amount_ratio_df.collect()[0][0]
+      total_sale_amount = total_sale_amount_ratio_df.collect()[0][1]
 
       logger.info(f"Save to table sale_batch.total_sale_amount_ratio ({total_sale_amount}, {total_sale_ratio}, {total_customer})")
     except Exception as e:
