@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+pip install virtualenv
+
 cd ./src
 virtualenv venv
 source venv/bin/activate
