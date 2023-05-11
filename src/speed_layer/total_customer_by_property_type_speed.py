@@ -84,7 +84,7 @@ class SpeedTotalCustomerByPropertyType:
                     .format("snowflake") \
                     .options(**SNOWFLAKE_OPTIONS) \
                     .option("sfSchema", "sale_speed") \
-                    .option("dbtable", "total_per_property_type") \
+                    .option("dbtable", "total_customer_by_property_type") \
                     .mode("append") \
                     .save()
         
