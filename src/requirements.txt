@@ -4,6 +4,6 @@ pandas
 plotly
 dask
 streamlit
-seaborn
-matplotlib
 apache-airflow
+snowflake-connector-python
+"snowflake-connector-python[pandas]"
