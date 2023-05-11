@@ -2,8 +2,8 @@
 USE ROLE ACCOUNTADMIN;
 
 CREATE OR REPLACE WAREHOUSE real_estate_sales_wh
-  WITH WAREHOUSE_SIZE = 'MEDIUM'
-  AUTO_SUSPEND = 120
+  WITH WAREHOUSE_SIZE = 'XSMALL'
+  AUTO_SUSPEND = 60
   AUTO_RESUME = true
   INITIALLY_SUSPENDED = TRUE;
 
@@ -40,8 +40,8 @@ CREATE OR REPLACE TABLE sale_db.sale_lake.data_lake (
 -- schema: sale_batch
 -- table: total_sale_amount_ratio
 CREATE OR REPLACE TABLE sale_db.sale_batch.total_sale_amount_ratio (
-    total_sale_amount FLOAT,
     total_sales_ratio FLOAT,
+    total_sale_amount FLOAT,
     total_customer BIGINT,
     started_at TIMESTAMP_NTZ(9),
     ended_at TIMESTAMP_NTZ(9)
@@ -68,15 +68,15 @@ CREATE OR REPLACE TABLE sale_db.sale_batch.total_customer_by_town (
 -- schema: sale_speed
 -- table: total_sale_amount_ratio
 CREATE OR REPLACE TABLE sale_db.sale_speed.total_sale_amount_ratio (
-    total_sale_amount FLOAT,
     total_sales_ratio FLOAT,
+    total_sale_amount FLOAT,
     total_customer BIGINT,
     created_at TIMESTAMP_NTZ(9)
 ) CLUSTER BY (created_at);
 
 -- schema: sale_speed
--- table: total_per_property_type
-CREATE OR REPLACE TABLE sale_db.sale_speed.total_per_property_type (
+-- table: total_customer_by_property_type
+CREATE OR REPLACE TABLE sale_db.sale_speed.total_customer_by_property_type (
     property_type TEXT,
     total_customer BIGINT,
     created_at TIMESTAMP_NTZ(9)
