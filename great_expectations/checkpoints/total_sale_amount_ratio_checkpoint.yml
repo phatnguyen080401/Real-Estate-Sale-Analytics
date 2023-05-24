@@ -1,0 +1,34 @@
+name: total_sale_amount_ratio_checkpoint
+config_version: 1.0
+template_name:
+module_name: great_expectations.checkpoint
+class_name: Checkpoint
+run_name_template:
+expectation_suite_name:
+batch_request: {}
+action_list:
+  - name: store_validation_result
+    action:
+      class_name: StoreValidationResultAction
+  - name: store_evaluation_params
+    action:
+      class_name: StoreEvaluationParametersAction
+  - name: update_data_docs
+    action:
+      class_name: UpdateDataDocsAction
+      site_names: []
+evaluation_parameters: {}
+runtime_configuration: {}
+validations:
+  - batch_request:
+      datasource_name: snowflake_db
+      data_connector_name: default_runtime_data_connector_name
+      data_asset_name: sale_db.sale_batch.total_sale_amount_ratio
+      runtime_parameters:
+        query: SELECT * FROM total_sale_amount_ratio LIMIT 1000;
+      batch_identifiers:
+        default_identifier_name: default_identifier
+    expectation_suite_name: total_sale_amount_ratio_suite
+profilers: []
+ge_cloud_id:
+expectation_suite_ge_cloud_id:
