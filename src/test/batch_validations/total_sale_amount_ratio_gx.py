@@ -49,6 +49,11 @@ validator.expect_column_values_to_be_in_type_list(
   column="total_customer",
   type_list=["INTEGER", "FLOAT"]
 )
+validator.expect_column_min_to_be_between(
+  column="total_customer", 
+  min_value=1,
+  max_value=1 
+)
 
 validator.expect_column_values_to_not_be_null(column="started_at")
 validator.expect_column_values_to_be_in_type_list(
