@@ -23,3 +23,5 @@ checkpoint/
 
 test.py
 !.gitkeep
+
+/great_expectations
