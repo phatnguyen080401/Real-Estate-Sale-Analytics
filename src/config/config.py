@@ -18,11 +18,13 @@ config = {
     "SNOWFLAKE": {
         "URL": parser.get('SNOWFLAKE', 'URL'),
         "ACCOUNT": parser.get('SNOWFLAKE', 'ACCOUNT'),
+        "REGION": parser.get('SNOWFLAKE', 'REGION'),
         "USER": parser.get('SNOWFLAKE', 'USER'),
         "PASSWORD": parser.get('SNOWFLAKE', 'PASSWORD'),
         "DATABASE": parser.get('SNOWFLAKE', 'DATABASE'),
         "SCHEMA": parser.get('SNOWFLAKE', 'SCHEMA'),
         "WAREHOUSE": parser.get('SNOWFLAKE', 'WAREHOUSE'),
+        "ROLE": parser.get('SNOWFLAKE', 'ROLE'),
     },
 
     "KAFKA": {
