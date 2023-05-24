@@ -1,9 +1,13 @@
+import sys
+sys.path.append(".")
+
 import time  
 import numpy as np  
 import pandas as pd  
 import plotly.express as px 
 import streamlit as st  
 from datetime import datetime
+from config.config import config
 
 import snowflake.connector
 from snowflake.connector import errors, errorcode
@@ -15,13 +19,13 @@ st.set_page_config(
 )
 
 config = {
-    "user": "dbadmin",
-    "password": "123456",
-    "account": "tl16901",
-    "region": "ap-southeast-1",
-    "database": "sale_db",
-    "warehouse": "real_estate_sales_wh",
-    "role":"DBADMIN"
+    "user": config['SNOWFLAKE']['USER'],
+    "password": config['SNOWFLAKE']['PASSWORD'],
+    "account": config['SNOWFLAKE']['ACCOUNT'],
+    "region": config['SNOWFLAKE']['REGION'],
+    "database": config['SNOWFLAKE']['DATABASE'],
+    "warehouse": config['SNOWFLAKE']['WAREHOUSE'],
+    "role": config['SNOWFLAKE']['ROLE']
 }
 
 def query_total_sale_amount(conn_config):
@@ -328,4 +332,4 @@ while True:
 
       st.write(fig)
 
-    time.sleep(500)
+    time.sleep(60*2)
