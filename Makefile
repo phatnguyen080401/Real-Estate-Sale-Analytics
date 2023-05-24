@@ -20,8 +20,5 @@ reset-volume-docker:
 	sudo rm -rf ./deploy/docker/volumes/kafka/*
 	sudo rm -rf ./deploy/docker/volumes/zookeeper/*
 
-setup-env:
-	bash scripts/setup-env.sh
-
-get-uid-gid-airflow:
-	bash scripts/get-uid-gid-airflow.sh
+setup:
+	bash scripts/setup.sh
