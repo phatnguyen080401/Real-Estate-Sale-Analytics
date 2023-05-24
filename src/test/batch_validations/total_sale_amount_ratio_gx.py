@@ -78,4 +78,4 @@ utils.configure_checkpoint(
     query="SELECT * FROM total_sale_amount_ratio LIMIT 1000;"
 )
 
-# utils.run_checkpoint(checkpoint_name=CHECKPOINT_NAME)
+utils.run_checkpoint(checkpoint_name=CHECKPOINT_NAME)
