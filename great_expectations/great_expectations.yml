@@ -16,7 +16,7 @@ config_version: 3.0
 datasources:
   snowflake_db:
     execution_engine:
-      connection_string: snowflake://root:Password123@tl16901.ap-southeast-1/sale_db/sale_batch?warehouse=real_estate_sales_wh&role=ACCOUNTADMIN
+      connection_string: snowflake_conn
       class_name: SqlAlchemyExecutionEngine
       module_name: great_expectations.execution_engine
     data_connectors:
