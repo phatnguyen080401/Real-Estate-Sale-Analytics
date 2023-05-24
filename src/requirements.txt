@@ -6,4 +6,6 @@ dask
 streamlit
 apache-airflow
 snowflake-connector-python
-"snowflake-connector-python[pandas]"
+snowflake-connector-python[pandas]
+great-expectations
+snowflake-sqlalchemy
