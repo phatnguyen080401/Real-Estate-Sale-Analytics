@@ -7,5 +7,6 @@ streamlit
 apache-airflow
 snowflake-connector-python
 snowflake-connector-python[pandas]
-great-expectations
 snowflake-sqlalchemy
+great-expectations
+airflow-provider-great-expectations
