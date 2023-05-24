@@ -40,24 +40,23 @@ validator.expect_column_values_to_be_in_type_list(
 validator.expect_column_values_to_not_be_null(column="total_customer")
 validator.expect_column_values_to_be_in_type_list(
   column="total_customer",
-  type_list=["INTEGER", "FLOAT"]
+  type_list=["DECIMAL"]
 )
-validator.expect_column_min_to_be_between(
+validator.expect_column_values_to_be_between(
   column="total_customer", 
-  min_value=1,
-  max_value=1 
+  min_value=1 
 )
 
 validator.expect_column_values_to_not_be_null(column="started_at")
 validator.expect_column_values_to_be_in_type_list(
   column="started_at",
-  type_list=["TIMESTAMP"]
+  type_list=["TIMESTAMP_NTZ"]
 )
 
 validator.expect_column_values_to_not_be_null(column="ended_at")
 validator.expect_column_values_to_be_in_type_list(
   column="ended_at",
-  type_list=["TIMESTAMP"]
+  type_list=["TIMESTAMP_NTZ"]
 )
 
 utils.save_expectation_suite(validator)
