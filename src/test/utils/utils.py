@@ -48,18 +48,9 @@ def create_datasource(datasource_name, sf_schema):
     print('Data source config successful')
   except:
     print('Please check datasource config, the connection is UNSUCCESSFUL')
-
-  if not check_datasource_config_exists(datasource_name):
+  else:
     context.add_datasource(**datasource_config)
     print("Create datasource successful")
-
-def check_datasource_config_exists(datasource_name):
-  for datasource in context.list_datasources():
-    if datasource["name"] == datasource_name:
-      print(f'Datasource with name \"{datasource_name}\" configured already, will proceed with the configured details')
-      return True
-    else:
-      return False
 
 def create_expectation_suite(expectation_suite_name):
   try:
