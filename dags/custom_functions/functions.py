@@ -3,6 +3,7 @@ import shutil
 import dask.dataframe as dd
 import pandas as pd
 import numpy as np
+import subprocess
 
 from pyarrow import *
 import pyarrow.csv as pv
@@ -11,6 +12,8 @@ import pyarrow as pa
 
 from urllib.error import HTTPError
 from urllib import request
+
+from airflow.exceptions import AirflowException
 
 FILE_NAME = "Real_Estate_Sales_2001-2020_GL"
 AIRFLOW_DIR = "/opt/airflow"
@@ -80,3 +83,28 @@ def move_file(file_number, **kwargs):
   file_name = f"Real_Estate_Sales-{file_number}"
   shutil.move(f"{AIRFLOW_DIR}/src/{source}/{file_name}.parquet", 
               f"{AIRFLOW_DIR}/src/{destination}/{file_name}.parquet")
+
+def run_gx_checkpoint(checkpoint_name, **kwargs):
+  validation_process = subprocess.Popen(
+    ["great_expectations", "checkpoint", "run", checkpoint_name],
+    stdout=subprocess.PIPE,
+    universal_newlines=True,
+  )
+  validation_result = validation_process.communicate()[0]
+  return_code = validation_process.returncode
+
+  if return_code:
+    docs_process = subprocess.Popen(
+      ["great_expectations", "docs", "list"],
+      stdout=subprocess.PIPE,
+      universal_newlines=True,
+    )
+    docs_result = docs_process.communicate()[0]
+
+    print(docs_result)
+
+    raise AirflowException(
+      "Checkpoint validation failed. Inspect the Data Docs for more information."
+    )
+  else:
+    print(validation_result)
