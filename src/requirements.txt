@@ -9,4 +9,3 @@ snowflake-connector-python
 snowflake-connector-python[pandas]
 snowflake-sqlalchemy
 great-expectations
-airflow-provider-great-expectations
