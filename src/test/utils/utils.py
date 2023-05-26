@@ -118,11 +118,6 @@ def configure_checkpoint(checkpoint_name, datasource_name, expectation_suite_nam
 
   context.add_checkpoint(**checkpoint_config)
 
-def run_checkpoint(checkpoint_name):
-  checkpoint_result = context.run_checkpoint(checkpoint_name)
-  print(f'{checkpoint_result}')
-  create_reports(checkpoint_result)
-
 def create_reports(checkpoint_result):
   context.build_data_docs()
   validation_result_identifier = checkpoint_result.list_validation_result_identifiers()[0]
