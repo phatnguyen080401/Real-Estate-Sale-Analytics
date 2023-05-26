@@ -1,6 +1,12 @@
 import glob
 from datetime import datetime, timedelta
-from custom_functions import download_file, split_file, move_file, convert_to_parquet, adjust_dataframe
+from custom_functions import (
+  download_file, 
+  split_file, 
+  move_file, 
+  convert_to_parquet, 
+  adjust_dataframe
+)
 
 from airflow import DAG
 from airflow.models import Variable

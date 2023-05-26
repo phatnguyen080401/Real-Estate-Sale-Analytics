@@ -3,8 +3,9 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.python import PythonOperator
 
-from great_expectations_provider.operators.great_expectations import GreatExpectationsOperator
+from custom_functions import run_gx_checkpoint
 
 default_args = {
   'owner': 'airflow',
@@ -13,18 +14,16 @@ default_args = {
   'retries': 0
 }
 
-GX_DIR = "/opt/airflow/great_expectations"
-
 with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active_runs=1, schedule="*/20 * * * *") as dag:
   total_customer_by_property_type_batch = BashOperator(
     task_id="total_customer_by_property_type_batch",
     bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_customer_by_property_type_batch.py"
   )
 
-  total_customer_by_property_type_validation = GreatExpectationsOperator(
+  total_customer_by_property_type_validation = PythonOperator(
     task_id="total_customer_by_property_type_validation",
-    data_context_root_dir=GX_DIR,
-    checkpoint_name="total_customer_by_property_type_checkpoint",
+    python_callable=run_gx_checkpoint,
+    kwargs={"checkpoint_name": "total_customer_by_property_type_checkpoint"}
   )
 
   total_customer_by_town_batch = BashOperator(
@@ -32,10 +31,10 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active
     bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_customer_by_town_batch.py"
   )
 
-  total_customer_by_town_validation = GreatExpectationsOperator(
+  total_customer_by_town_validation = PythonOperator(
     task_id="total_customer_by_town_validation",
-    data_context_root_dir=GX_DIR,
-    checkpoint_name="total_customer_by_town_checkpoint",
+    python_callable=run_gx_checkpoint,
+    kwargs={"checkpoint_name": "total_customer_by_town_checkpoint"}
   )
 
   total_sale_amount_ratio_batch = BashOperator(
@@ -43,10 +42,10 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active
     bash_command="cd /opt/airflow/src/ && python /opt/airflow/src/batch_layer/total_sale_amount_ratio_batch.py"
   )
 
-  total_sale_amount_ratio_validation = GreatExpectationsOperator(
+  total_sale_amount_ratio_validation = PythonOperator(
     task_id="total_sale_amount_ratio_validation",
-    data_context_root_dir=GX_DIR,
-    checkpoint_name="total_sale_amount_ratio_checkpoint",
+    python_callable=run_gx_checkpoint,
+    kwargs={"checkpoint_name": "total_sale_amount_ratio_checkpoint"}
   )
 
   end = EmptyOperator(task_id="done", trigger_rule='all_success')
