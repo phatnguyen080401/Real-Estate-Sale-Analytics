@@ -10,7 +10,6 @@ DATASOURCE_NAME = "snowflake_db"
 EXPECTATION_SUITE_NAME = f"{SF_TABLE}_suite"
 CHECKPOINT_NAME = f"{SF_TABLE}_checkpoint"
 
-
 validator = utils.setup_expectations_validator(
   datasource_name=DATASOURCE_NAME,
   expectation_suite_name=EXPECTATION_SUITE_NAME,
@@ -86,5 +85,3 @@ utils.configure_checkpoint(
     sf_table=SF_TABLE,
     query="SELECT * FROM total_customer_by_property_type LIMIT 1000;"
 )
-
-utils.run_checkpoint(checkpoint_name=CHECKPOINT_NAME)
