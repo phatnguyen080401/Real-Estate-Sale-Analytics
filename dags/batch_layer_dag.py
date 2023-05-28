@@ -23,7 +23,7 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active
   total_customer_by_property_type_validation = PythonOperator(
     task_id="total_customer_by_property_type_validation",
     python_callable=run_gx_checkpoint,
-    kwargs={"checkpoint_name": "total_customer_by_property_type_checkpoint"}
+    op_kwargs={"checkpoint_name": "total_customer_by_property_type_checkpoint"}
   )
 
   total_customer_by_town_batch = BashOperator(
@@ -34,7 +34,7 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active
   total_customer_by_town_validation = PythonOperator(
     task_id="total_customer_by_town_validation",
     python_callable=run_gx_checkpoint,
-    kwargs={"checkpoint_name": "total_customer_by_town_checkpoint"}
+    op_kwargs={"checkpoint_name": "total_customer_by_town_checkpoint"}
   )
 
   total_sale_amount_ratio_batch = BashOperator(
@@ -45,7 +45,7 @@ with DAG('batch_layer_dag', default_args=default_args, catchup=False, max_active
   total_sale_amount_ratio_validation = PythonOperator(
     task_id="total_sale_amount_ratio_validation",
     python_callable=run_gx_checkpoint,
-    kwargs={"checkpoint_name": "total_sale_amount_ratio_checkpoint"}
+    op_kwargs={"checkpoint_name": "total_sale_amount_ratio_checkpoint"}
   )
 
   end = EmptyOperator(task_id="done", trigger_rule='all_success')
