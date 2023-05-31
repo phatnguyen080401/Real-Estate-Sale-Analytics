@@ -67,5 +67,4 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 ### Kafka Jobs DAG
 ### Fetch Data DAG
 
-## Configure Great Expectations(opational)s
-dasdasdasd
+## Configure Great Expectations (opational)
