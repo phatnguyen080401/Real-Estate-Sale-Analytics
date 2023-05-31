@@ -1,0 +1,106 @@
+[2023-05-10T04:13:45.796+0000] {processor.py:154} INFO - Started process (PID=52) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:13:45.797+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:13:45.799+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:45.799+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:13:45.890+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:13:46.418+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.418+0000] {manager.py:507} INFO - Created Permission View: can read on DAG:kafka_jobs_dag
+[2023-05-10T04:13:46.445+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.445+0000] {manager.py:507} INFO - Created Permission View: can delete on DAG:kafka_jobs_dag
+[2023-05-10T04:13:46.477+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.477+0000] {manager.py:507} INFO - Created Permission View: can edit on DAG:kafka_jobs_dag
+[2023-05-10T04:13:46.478+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.478+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:13:46.516+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.515+0000] {dag.py:2606} INFO - Creating ORM DAG for kafka_jobs_dag
+[2023-05-10T04:13:46.540+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:13:46.540+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:13:46.579+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.795 seconds
+[2023-05-10T04:14:16.751+0000] {processor.py:154} INFO - Started process (PID=77) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:16.753+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:14:16.754+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:16.754+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:16.787+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:16.887+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:16.887+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:14:16.926+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:16.926+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:14:16.958+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.217 seconds
+[2023-05-10T04:14:47.122+0000] {processor.py:154} INFO - Started process (PID=104) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:47.123+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:14:47.124+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:47.124+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:47.146+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:14:47.205+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:47.204+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:14:47.243+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:14:47.242+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:14:47.268+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.151 seconds
+[2023-05-10T04:15:17.411+0000] {processor.py:154} INFO - Started process (PID=130) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:17.412+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:15:17.413+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:17.412+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:17.429+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:17.483+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:17.483+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:15:17.515+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:17.515+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:15:17.541+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.133 seconds
+[2023-05-10T04:15:47.701+0000] {processor.py:154} INFO - Started process (PID=156) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:47.702+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:15:47.702+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:47.702+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:47.715+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:15:47.758+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:47.758+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:15:47.787+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:15:47.787+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:15:47.810+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.112 seconds
+[2023-05-10T04:17:32.455+0000] {processor.py:154} INFO - Started process (PID=52) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:17:32.458+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:17:32.460+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:32.460+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:17:32.519+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:17:33.030+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.029+0000] {manager.py:507} INFO - Created Permission View: can delete on DAG:kafka_jobs_dag
+[2023-05-10T04:17:33.050+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.050+0000] {manager.py:507} INFO - Created Permission View: can read on DAG:kafka_jobs_dag
+[2023-05-10T04:17:33.080+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.080+0000] {manager.py:507} INFO - Created Permission View: can edit on DAG:kafka_jobs_dag
+[2023-05-10T04:17:33.081+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.081+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:17:33.124+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.123+0000] {dag.py:2606} INFO - Creating ORM DAG for kafka_jobs_dag
+[2023-05-10T04:17:33.159+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:17:33.159+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:17:33.209+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.770 seconds
+[2023-05-10T04:18:03.384+0000] {processor.py:154} INFO - Started process (PID=77) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:03.385+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:18:03.386+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:03.386+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:03.400+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:03.448+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:03.448+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:18:03.483+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:03.483+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:18:03.509+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.129 seconds
+[2023-05-10T04:18:33.659+0000] {processor.py:154} INFO - Started process (PID=103) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:33.660+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:18:33.660+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:33.660+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:33.682+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:18:33.729+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:33.728+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:18:33.754+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:18:33.754+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to 2023-03-20T00:00:00+00:00, run_after=2023-03-20T00:00:00+00:00
+[2023-05-10T04:18:33.780+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.124 seconds
+[2023-05-10T04:19:46.982+0000] {processor.py:154} INFO - Started process (PID=51) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:19:46.986+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:19:46.988+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:19:46.988+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:19:47.093+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:19:47.333+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:19:47.332+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:19:47.403+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:19:47.402+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:19:47.463+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.496 seconds
+[2023-05-10T04:21:31.129+0000] {processor.py:154} INFO - Started process (PID=51) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:21:31.134+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:21:31.147+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:21:31.145+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:21:31.196+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:21:31.409+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:21:31.409+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:21:31.465+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:21:31.465+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:21:31.520+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.400 seconds
+[2023-05-10T04:22:01.709+0000] {processor.py:154} INFO - Started process (PID=76) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:01.711+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:22:01.712+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:01.712+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:01.729+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:01.796+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:01.796+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:22:01.833+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:01.833+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:22:01.858+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.156 seconds
+[2023-05-10T04:22:32.030+0000] {processor.py:154} INFO - Started process (PID=102) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:32.031+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:22:32.032+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:32.032+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:32.048+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:22:32.101+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:32.101+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:22:32.143+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:22:32.143+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:22:32.183+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.156 seconds
+[2023-05-10T04:23:02.347+0000] {processor.py:154} INFO - Started process (PID=127) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:02.348+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:23:02.349+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:02.349+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:02.364+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:02.429+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:02.429+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:23:02.461+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:02.461+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:23:02.488+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.145 seconds
+[2023-05-10T04:23:32.541+0000] {processor.py:154} INFO - Started process (PID=155) to work on /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:32.542+0000] {processor.py:756} INFO - Processing file /opt/airflow/dags/kafka_jobs_dag.py for tasks to queue
+[2023-05-10T04:23:32.542+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:32.542+0000] {dagbag.py:537} INFO - Filling up the DagBag from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:32.555+0000] {processor.py:766} INFO - DAG(s) dict_keys(['kafka_jobs_dag']) retrieved from /opt/airflow/dags/kafka_jobs_dag.py
+[2023-05-10T04:23:32.603+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:32.603+0000] {dag.py:2585} INFO - Sync 1 DAGs
+[2023-05-10T04:23:32.632+0000] {logging_mixin.py:137} INFO - [2023-05-10T04:23:32.632+0000] {dag.py:3340} INFO - Setting next_dagrun for kafka_jobs_dag to None, run_after=None
+[2023-05-10T04:23:32.654+0000] {processor.py:176} INFO - Processing /opt/airflow/dags/kafka_jobs_dag.py took 0.116 seconds
