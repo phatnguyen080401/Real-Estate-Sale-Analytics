@@ -14,7 +14,7 @@
     - [Speed Layer DAG](#speed-layer-dag)
     - [Kafka Jobs DAG](#kafka-jobs-dag)
     - [Fetch Data DAG](#fetch-data-dag)
-  - [Configure Great Expectations (opational)](#configure-great-expectations)
+  - [Configure Great Expectations (opational)](#configure-great-expectations-optional)
 
 ## Introduction
 In this project, we are trying to build a data pipeline using Lambda architecture to handle massive quantities of data by 
@@ -67,4 +67,5 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 ### Kafka Jobs DAG
 ### Fetch Data DAG
 
-## Configure Great Expectations (opational)
+## Configure Great Expectations(opational)s
+dasdasdasd
