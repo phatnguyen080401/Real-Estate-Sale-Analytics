@@ -155,17 +155,43 @@ Run Airflow in one machine and connect the Airflow webserver from other machine,
       * View list of allowed ports: `sudo ufw status verbose`
 
 ## Airflow DAGs
+All DAGs are located in `dags/` folder.
+
 ### Batch Layer DAG
 ![Batch Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/batch_layer_dag.png)
+
+* `total_customer_by_property_type_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by property type. Then store the result into **`sale_batch.total_customer_by_property_type`**.
+* `total_customer_by_property_type_validation`:
+* `total_customer_by_town_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by town. Then store the result into **`sale_batch.total_customer_by_town`**.
+* `total_customer_by_town_validation`:
+* `total_sale_amount_ratio_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total sale amount, total customer and total sale ratio. Then store the result into **`sale_batch.total_sale_amount_ratio`**.
+* `total_sale_amount_ratio_validation`:
+* `done`: It is a task which will be triggered when all tasks run successfully.
 
 ### Speed Layer DAG
 ![Speed Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/speed_layer_dag.png)
 
+* `total_customer_by_property_type_speed`:
+* `total_customer_by_town_speed`:
+* `total_sale_amount_ratio_speed`:
+* `done`
+
 ### Kafka Jobs DAG
 ![Kafka Jobs DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/kafka_jobs_dag.png)
 
+* `producer`:
+* `consumer`:
+
 ### Fetch Data DAG
 ![Fetch Data DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/fetch_data_dag.png)
+
+* `folder_is_empty`:
+* `move_file_to_folder_data`:
+* `point_to_next_file`:
+* `download_file`:
+* `convert_to_parquet`:
+* `adjust_dataframe`:
+* `split_file`:
 
 ## Configure Great Expectations (opational)
 **Note: The configuration in this section can be skipped since I have already done and created.** 
