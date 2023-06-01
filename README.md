@@ -21,7 +21,91 @@ In this project, we are trying to build a data pipeline using Lambda architectur
 taking advantage of both batch and stream processing methods. Besides, we also analyze, create real-time dashboard and apply some Machine Learning models to predict the data of the Real Estate Sale 2001-2020 records.
 
 ## Project structure
-
+.
+├── Makefile
+├── README.md
+├── dags
+│   ├── batch_layer_dag.py
+│   ├── custom_functions
+│   │   ├── __init__.py
+│   │   └── functions.py
+│   ├── fetch_data_dag.py
+│   ├── kafka_jobs_dag.py
+│   └── speed_layer_dag.py
+├── deploy
+│   ├── apache-airflow.yml
+│   ├── docker
+│   │   └── volumes
+│   │       ├── airflow
+│   │       ├── kafka
+│   │       ├── postgres
+│   │       └── zookeeper
+│   └── docker-compose.yml
+├── great_expectations
+│   ├── checkpoints
+│   │   ├── total_customer_by_property_type_checkpoint.yml
+│   │   ├── total_customer_by_town_checkpoint.yml
+│   │   └── total_sale_amount_ratio_checkpoint.yml
+│   ├── expectations
+│   │   ├── total_customer_by_property_type_suite.json
+│   │   ├── total_customer_by_town_suite.json
+│   │   └── total_sale_amount_ratio_suite.json
+│   ├── great_expectations.yml
+│   ├── plugins
+│   │   └── custom_data_docs
+│   │       ├── renderers
+│   │       ├── styles
+│   │       │   └── data_docs_custom_styles.css
+│   │       └── views
+│   └── profilers
+├── images
+│   └── architecture.png
+├── scripts
+│   └── setup.sh
+└── src
+    ├── Dockerfile
+    ├── batch_layer
+    │   ├── total_customer_by_property_type_batch.py
+    │   ├── total_customer_by_town_batch.py
+    │   └── total_sale_amount_ratio_batch.py
+    ├── checkpoint
+    ├── config
+    │   ├── __init__.py
+    │   └── config.py
+    ├── config.ini
+    ├── config.template.ini
+    ├── dashboard
+    │   └── dashboard.py
+    ├── data
+    ├── data_source
+    ├── helper
+    │   ├── __init__.py
+    │   └── helper.py
+    ├── init
+    │   ├── init.sql
+    │   └── user_roles.sql
+    ├── kafka_jobs
+    │   ├── __init__.py
+    │   ├── consumer.py
+    │   └── producer.py
+    ├── logger
+    │   ├── __init__.py
+    │   └── logger.py
+    ├── logs
+    ├── requirements.txt
+    ├── speed_layer
+    │   ├── total_customer_by_property_type_speed.py
+    │   ├── total_customer_by_town_speed.py
+    │   └── total_sale_amount_ratio_speed.py
+    ├── test
+    │   ├── batch_validations
+    │   │   ├── total_customer_by_property_type_gx.py
+    │   │   ├── total_customer_by_town_gx.py
+    │   │   └── total_sale_amount_ratio_gx.py
+    │   └── utils
+    │       ├── __init__.py
+    │       └── utils.py
+    └── tmp
 
 ## Architecture
 ![Lambda architecture](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/architecture.png)
