@@ -137,7 +137,7 @@ taking advantage of both batch and stream processing methods. Besides, we also a
    * Run command: `make start-airflow`
 
 ## Database SQL scripts
-The SQL scripts are located in `src > init` folder. You need to run these scripts in Snowflake worksheet to create initial database for the project.
+The SQL scripts are located in `src/init/` folder. You need to run these scripts in Snowflake worksheet to create initial database for the project.
 
 There are 2 scripts for creating database and user roles:
    * `init.sql`: This script sets up the data warehouse, database, schema and tables.
@@ -148,11 +148,11 @@ There are 2 scripts for creating database and user roles:
 Run and connect Airflow in the same machine with port 8080, the Airflow webserver address: https://localhost:8080
 ### Remote
 Run Airflow in one machine and connect the Airflow webserver from other machine, follow below steps:
-   * Connect to server which hosts the Airflow and bind the port 8080 with local port in remote machine (for safe security): `ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=2 -L 8080:localhost:8080 <username>@<ip-address> -p <port>`
-   * Setup firewall:
-      - Enable **ufw** firewall: `sudo ufw enable`
-      - Open port **8080**: `sudo ufw allow 8080/tcp`
-      - View list of allowed ports: `sudo ufw status verbose`
+   1. Connect to server which hosts the Airflow and bind the port 8080 with local port in remote machine (for safe security): `ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=2 -L 8080:localhost:8080 <username>@<ip-address> -p <port>`
+   2. Setup firewall:
+      * Enable **ufw** firewall: `sudo ufw enable`
+      * Open port **8080**: `sudo ufw allow 8080/tcp`
+      * View list of allowed ports: `sudo ufw status verbose`
 
 ## Airflow DAGs
 ### Batch Layer DAG
@@ -161,3 +161,23 @@ Run Airflow in one machine and connect the Airflow webserver from other machine,
 ### Fetch Data DAG
 
 ## Configure Great Expectations (opational)
+**Note: The configuration in this section can be skipped since I have already done and created.** 
+
+In this project, we will use Great Expectations version 3 API. Except for the very first step of creating a Data Context (the Great Expectations folder and associated files), all of the configuration for connecting to Datasources, creating Expectation Suites, creating Checkpoints and validating, will be accomplished using Python scripts in `src/test/` folder. 
+
+This folder contains 2 sub-folders:
+   * `batch_validations`: expectations, checkpoints and validations for batch layer.
+   * `utils`: helps to run, config and create datasource, batch request and checkpoints.
+
+We have already initialized the Data Context, validations and checkpoints. But if you wish to start from scratch, keep a copy of the **config_variables.yml** and **great_expectations.yml** files and delete the great_expectations folder.
+
+1. Initialize the Data Context by running:
+```
+great_expectations init
+```
+
+2. Run Python script in the `test/batch_validations/` folder where batches of data can be sampled, expectation suites created, and Checkpoints can be configured.
+   
+   **Note: Before running any of the Python scripts, run the Airflow DAG at least once, so that all the data files and tables are moved to their respective locations. Only then wilFl you be able to run the scripts and test the Datasource connections locally.**
+
+3. All checkpoints and expectation suites is located in `great_expectations/checkpoints/` and `great_expectations/expectations/` folders respectively.
