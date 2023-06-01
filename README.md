@@ -161,12 +161,18 @@ All DAGs are located in `dags/` folder.
 ![Batch Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/batch_layer_dag.png)
 
 * `total_customer_by_property_type_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by property type. Then store the result into **`sale_batch.total_customer_by_property_type`**.
-* `total_customer_by_property_type_validation`:
+
+* `total_customer_by_property_type_validation`: This task runs the checkpoint to validate data that has just landed in `sale_batch.total_customer_by_property_type`.
+
 * `total_customer_by_town_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by town. Then store the result into **`sale_batch.total_customer_by_town`**.
-* `total_customer_by_town_validation`:
+
+* `total_customer_by_town_validation`: After the previous task stores the result in Snowflake, this task will run another checkpoint to validate the data in `sale_batch.total_customer_by_town`.
+
 * `total_sale_amount_ratio_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total sale amount, total customer and total sale ratio. Then store the result into **`sale_batch.total_sale_amount_ratio`**.
-* `total_sale_amount_ratio_validation`:
-* `done`: It is a task which will be triggered when all tasks run successfully.
+
+* `total_sale_amount_ratio_validation`: After this task runs successfully and stores the result into table, it will run a checkpoint to validate data in `sale_batch.total_sale_amount_ratio`.
+
+* `done`: It is a task which will be only triggered when all tasks run successfully.
 
 ### Speed Layer DAG
 ![Speed Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/speed_layer_dag.png)
