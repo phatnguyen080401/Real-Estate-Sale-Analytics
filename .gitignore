@@ -11,16 +11,17 @@ env/
 venv/
 
 # Customize
-/deploy/docker/volumes/airflow/*
-/deploy/docker/volumes/kafka/*
-/deploy/docker/volumes/postgres/*
-/deploy/docker/volumes/zookeeper/*
+/deploy/docker/volumes/airflow/
+/deploy/docker/volumes/kafka/
+/deploy/docker/volumes/postgres/
+/deploy/docker/volumes/zookeeper/
 
 /src/logs/*.log
 config.ini
 .idea
 
-checkpoint/
+/src/checkpoint
+
 /src/data_source/*.parquet
 /src/tmp/*.parquet
 /src/data/*.parquet
