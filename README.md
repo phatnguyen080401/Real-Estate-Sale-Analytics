@@ -156,9 +156,16 @@ Run Airflow in one machine and connect the Airflow webserver from other machine,
 
 ## Airflow DAGs
 ### Batch Layer DAG
+![Batch Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/batch_layer_dag.png)
+
 ### Speed Layer DAG
+![Speed Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/speed_layer_dag.png)
+
 ### Kafka Jobs DAG
+![Kafka Jobs DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/kafka_jobs_dag.png)
+
 ### Fetch Data DAG
+![Fetch Data DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/fetch_data_dag.png)
 
 ## Configure Great Expectations (opational)
 **Note: The configuration in this section can be skipped since I have already done and created.** 
