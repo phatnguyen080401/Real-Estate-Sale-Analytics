@@ -137,10 +137,22 @@ taking advantage of both batch and stream processing methods. Besides, we also a
    * Run command: `make start-airflow`
 
 ## Database SQL scripts
+The SQL scripts are located in `src > init` folder. You need to run these scripts in Snowflake worksheet to create initial database for the project.
+
+There are 2 scripts for creating database and user roles:
+   * `init.sql`: This script sets up the data warehouse, database, schema and tables.
+   * `user_roles.sql`: This script used to create user role **Database admin** who has ability to query and CRUD tables. 
 
 ## Airflow Webserver UI
 ### Local
+Run and connect Airflow in the same machine with port 8080, the Airflow webserver address: https://localhost:8080
 ### Remote
+Run Airflow in one machine and connect the Airflow webserver from other machine, follow below steps:
+   * Connect to server which hosts the Airflow and bind the port 8080 with local port in remote machine (for safe security): `ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=2 -L 8080:localhost:8080 <username>@<ip-address> -p <port>`
+   * Setup firewall:
+      - Enable **ufw** firewall: `sudo ufw enable`
+      - Open port **8080**: `sudo ufw allow 8080/tcp`
+      - View list of allowed ports: `sudo ufw status verbose`
 
 ## Airflow DAGs
 ### Batch Layer DAG
