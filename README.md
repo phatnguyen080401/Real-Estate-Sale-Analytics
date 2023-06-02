@@ -116,9 +116,10 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 * Linux OS
 
 ## Setup
-1. **Config.ini file**
-   * Change `config.template.ini` to `config.ini`
-   * Adjust some basic values in `config.ini`
+1. **Environment variables file**
+   * Nevigate to `deploy` folder 
+   * Change `.env-template` to `.env`
+   * Adjust some basic values and credentials in `.env`
 2. **Virtual environment**
    * Setup environment: `make setup`
 3. **Create docker network**
