@@ -1,21 +1,18 @@
-import sys
-sys.path.append("..")
+import os
+from ruamel import yaml
 
 import great_expectations as gx
 from great_expectations.core.batch import BatchRequest, RuntimeBatchRequest
 from great_expectations.profile.user_configurable_profiler import UserConfigurableProfiler
 from great_expectations.checkpoint import SimpleCheckpoint
 
-from ruamel import yaml
-from config.config import config
-
-SFACCOUNT   = config['SNOWFLAKE']['ACCOUNT']
-SFREGION    = config['SNOWFLAKE']['REGION']
-SFUSER      = config['SNOWFLAKE']['USER']
-SFPASSWORD  = config['SNOWFLAKE']['PASSWORD']
-SFDATABASE  = config['SNOWFLAKE']['DATABASE']
-SFWAREHOUSE = config['SNOWFLAKE']['WAREHOUSE']
-SFROLE      = config['SNOWFLAKE']['ROLE']
+SFACCOUNT   = os.getenv("SNOWFLAKE_ACCOUNT")
+SFREGION    = os.getenv("SNOWFLAKE_REGION")
+SFUSER      = os.getenv("SNOWFLAKE_USER")
+SFPASSWORD  = os.getenv("SNOWFLAKE_PASSWORD")
+SFDATABASE  = os.getenv("SNOWFLAKE_DATABASE")
+SFWAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
+SFROLE      = os.getenv("SNOWFLAKE_ROLE")
 
 context = gx.get_context()
 

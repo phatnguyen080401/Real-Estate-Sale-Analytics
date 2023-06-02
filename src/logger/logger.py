@@ -1,7 +1,7 @@
 import logging
-from config import config
+import os
 
-LOG_DIR = config['LOG']['LOG_DIR']
+LOG_DIR = os.getenv("LOG_DIR")
 formatter = logging.Formatter('%(asctime)s- %(name)s - %(levelname)s - %(message)s')
 
 class Logger:
