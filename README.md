@@ -38,6 +38,7 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │       ├── kafka
 │   │       ├── postgres
 │   │       └── zookeeper
+│   ├── .env-template
 │   ├── apache-airflow.yml
 │   └── docker-compose.yml
 ├── great_expectations
@@ -62,9 +63,6 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │   ├── total_customer_by_town_batch.py
 │   │   └── total_sale_amount_ratio_batch.py
 │   ├── checkpoint
-│   ├── config
-│   │   ├── __init__.py
-│   │   └── config.py
 │   ├── dashboard
 │   │   └── dashboard.py
 │   ├── data
@@ -97,8 +95,6 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │       └── utils.py
 │   ├── tmp
 │   ├── Dockerfile
-│   ├── config.ini
-│   ├── config.template.ini
 │   └── requirements.txt
 ├── Makefile
 ├── README.md
