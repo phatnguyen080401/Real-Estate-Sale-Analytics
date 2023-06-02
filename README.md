@@ -162,42 +162,56 @@ All DAGs are located in `dags/` folder.
 
 * `total_customer_by_property_type_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by property type. Then store the result into **`sale_batch.total_customer_by_property_type`**.
 
-* `total_customer_by_property_type_validation`: This task runs the checkpoint to validate data that has just landed in `sale_batch.total_customer_by_property_type`.
+* `total_customer_by_property_type_validation`: This task runs the checkpoint to validate data that has just landed in **`sale_batch.total_customer_by_property_type`**.
 
 * `total_customer_by_town_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total customer categorized by town. Then store the result into **`sale_batch.total_customer_by_town`**.
 
-* `total_customer_by_town_validation`: After the previous task stores the result in Snowflake, this task will run another checkpoint to validate the data in `sale_batch.total_customer_by_town`.
+* `total_customer_by_town_validation`: After the previous task stores the result in Snowflake, this task will run another checkpoint to validate the data in **`sale_batch.total_customer_by_town`**.
 
 * `total_sale_amount_ratio_batch`: Get the data from **`sale_lake.data_lake`** and calculate the total sale amount, total customer and total sale ratio. Then store the result into **`sale_batch.total_sale_amount_ratio`**.
 
-* `total_sale_amount_ratio_validation`: After this task runs successfully and stores the result into table, it will run a checkpoint to validate data in `sale_batch.total_sale_amount_ratio`.
+* `total_sale_amount_ratio_validation`: After this task runs successfully and stores the result into table, it will run a checkpoint to validate data in **`sale_batch.total_sale_amount_ratio`**.
 
 * `done`: It is a task which will be only triggered when all tasks run successfully.
 
 ### Speed Layer DAG
 ![Speed Layer DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/speed_layer_dag.png)
 
-* `total_customer_by_property_type_speed`:
-* `total_customer_by_town_speed`:
-* `total_sale_amount_ratio_speed`:
-* `done`
+* `total_customer_by_property_type_speed`: This task runs Spark Streaming to get the data which is stored in Kafka topic **`real_estate_sales`**, transform it and calculate the total customer grouped by property type. Then store the result into **`sale_speed.total_customer_by_property_type_speed`**.
+
+* `total_customer_by_town_speed`: This task is simillar with the previous one except it stores the result about total customre from each town into **`sale_speed.total_customer_by_town_speed`**.
+
+* `total_sale_amount_ratio_speed`: This task executes anothe Spark Streaming and calculate the total sale amount, total sale ratio and total customer. Then store them into **`sale_speed.total_sale_amount_ratio_speed`**.
+
+* `done`: This task will be triggered if one of previous task runs failed. Otherwise, it will not be executed.
 
 ### Kafka Jobs DAG
 ![Kafka Jobs DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/kafka_jobs_dag.png)
 
-* `producer`:
-* `consumer`:
+* `producer`: This task using Spark Streaming to ingest real-time data. Whenever a new parquet file is moved into `data/` folder, it will read this parquet file and store the data in Kafka topic **`real_estate_sales`**. 
+
+* `consumer`: When new data is stored in Kafka topic, this task will read these new data immediately, adjust data type of some columns, fill null value to empty columns and store them into data lake: **`sale_lake.data_lake`**.
+
+* `done`: This task will be triggered if one of previous task runs failed. Otherwise, it will not be executed.
 
 ### Fetch Data DAG
 ![Fetch Data DAG](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/fetch_data_dag.png)
 
-* `folder_is_empty`:
-* `move_file_to_folder_data`:
-* `point_to_next_file`:
-* `download_file`:
-* `convert_to_parquet`:
-* `adjust_dataframe`:
-* `split_file`:
+* `folder_is_empty`: This task uses **BranchPythonOperator** to check whether or not `tmp/` folder is empty. There are two branches:
+   - Folder is empty: to **download_file** branch.
+   - Folder is not empty: to **move_file_to_folder_data** branch.
+
+* `move_file_to_folder_data`: It will move a parquet file in `tmp/` folder to `data/` folder in a certain period of time.
+
+* `point_to_next_file`: Each parquet file in `tmp/` folder has a suffix number: `Real_Estate_Sales-{x}.parquet` (x: 00,01,02,...). This task will rely on this number and point to the next file to move in next schedule.
+
+* `download_file`: It will download `Real Estate Sales 2001-2020 GL` dataset from the website ([link download](https://data.ct.gov/api/views/5mzw-sjtu/rows.csv?accessType=DOWNLOAD)) in **csv** format and store in `data_source/` folder.
+
+* `convert_to_parquet`: This task converts the **csv** file to **parquet** file.
+
+* `adjust_dataframe`: After convert to **parquet** file, it will change the data type of all columns, rename columns and fill null value to empty cells. Then overwrite the old parquet file.
+
+* `split_file`: When the **parquet** file is in correct format and data type, it is divided into smaller parquet files based on the number of partition. In this project, we set the partitions to 4000. You can modify the number of partition by opening the Airflow webserver, then go to `Admin > Variables` session and change the parameter **PARTITION**.
 
 ## Configure Great Expectations (opational)
 **Note: The configuration in this section can be skipped since I have already done and created.** 
