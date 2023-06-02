@@ -234,3 +234,8 @@ great_expectations init
    **Note: Before running any of the Python scripts, run the Airflow DAG at least once, so that all the data files and tables are moved to their respective locations. Only then wilFl you be able to run the scripts and test the Datasource connections locally.**
 
 3. All checkpoints and expectation suites is located in `great_expectations/checkpoints/` and `great_expectations/expectations/` folders respectively.
+
+4. Build data docs:
+```
+great_expectations docs build
+```
