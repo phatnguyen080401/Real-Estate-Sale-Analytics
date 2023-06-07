@@ -38,6 +38,7 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │       ├── kafka
 │   │       ├── postgres
 │   │       └── zookeeper
+│   ├── .env
 │   ├── .env-template
 │   ├── apache-airflow.yml
 │   └── docker-compose.yml
