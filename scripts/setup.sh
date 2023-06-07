@@ -31,7 +31,7 @@ echo "--------------------------------------------"
 cd ..
 echo "In folder: ."
 
-DIRECTORY = "great_expectations"
+DIRECTORY="great_expectations"
 
 if [ ! -d "$DIRECTORY" ]; then
   echo "Initialize Great Expectations..."
