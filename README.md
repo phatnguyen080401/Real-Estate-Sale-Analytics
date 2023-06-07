@@ -121,7 +121,7 @@ taking advantage of both batch and stream processing methods. Besides, we also a
    * Setup environment: `make setup`
 3. **Create docker network**
    * Create network: `docker network create kafka-airflow`
-4. **wwSnowflake credentials for great expectation**
+4. **Snowflake credentials for great expectation**
    * Go to folder **great_expectations**: `cd great_expectations`
    * Modify **great_expectations.yml** file: `datasources > snowflake_db > execution_engine > connection_string`
    * Snowflake credentials:
