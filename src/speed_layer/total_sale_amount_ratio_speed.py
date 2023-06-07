@@ -10,7 +10,6 @@ from pyspark.sql.types import *
 
 from datetime import datetime
 
-from config.config import config
 from logger.logger import Logger
 
 KAFKA_ENDPOINT = "{0}:{1}".format(os.getenv("KAFKA_ENDPOINT"), os.getenv("KAFKA_ENDPOINT_PORT"))
