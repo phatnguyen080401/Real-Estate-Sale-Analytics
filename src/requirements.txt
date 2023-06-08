@@ -9,3 +9,4 @@ snowflake-connector-python
 snowflake-connector-python[pandas]
 snowflake-sqlalchemy
 great-expectations
+python-dotenv
