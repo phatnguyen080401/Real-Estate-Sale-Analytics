@@ -6,6 +6,7 @@
   - [Prerequisite](#prerequisite)
   - [Setup](#setup)
   - [Database SQL scripts](#database-sql-scripts)
+  - [Dashboard](#dashboard)
   - [Airflow Webserver UI](#airflow-webserver-UI)
     - [Local](#local)
     - [Remote](#remote)
@@ -141,17 +142,26 @@ There are 2 scripts for creating database and user roles:
    * `init.sql`: This script sets up the data warehouse, database, schema and tables.
    * `user_roles.sql`: This script used to create user role **Database admin** who has ability to query and CRUD tables. 
 
+## Dashboard
+
+
+
 ## Airflow Webserver UI
 ### Local
 Run and connect Airflow in the same machine with port 8080, the Airflow webserver address: https://localhost:8080
 ### Remote
 Run Airflow in one machine and connect the Airflow webserver from other machine, follow below steps:
-   1. Connect to server which hosts the Airflow and bind the port 8080 with local port in remote machine (for safe security): `ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=2 -L 8080:localhost:8080 <username>@<ip-address> -p <port>`
+   1. Connect to server through terminal which hosts the Airflow and bind the port 8080 (or any ports you want, you can use **-L** option multiple time to bind) with local port in remote machine (for safe security): 
+   ```
+   ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=2 -L 8080:localhost:8080 <username>@<ip-address> -p <port>
+   ```
+
    2. Setup firewall:
       * Enable **ufw** firewall: `sudo ufw enable`
       * Open port **8080**: `sudo ufw allow 8080/tcp`
       * View list of allowed ports: `sudo ufw status verbose`
 
+   3. Access Webserver UI: https://localhost:8080
 ## Airflow DAGs
 All DAGs are located in `dags/` folder.
 
