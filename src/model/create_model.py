@@ -1,6 +1,6 @@
 #%%
 import sys
-sys.path.append(".")
+sys.path.append("..")
 import time
 import pandas as pd
 import math
@@ -153,11 +153,11 @@ def create_model(neurons, num_layers, dropout_rate):
     town_vocab = np.unique(df['TOWN'])
     town_vec_dim = int(math.sqrt(len(town_vocab)))
     town_max_len = find_max_len(town_vocab)
-    town_text_vectorizer = TextVectorization(max_tokens=len(town_vocab), output_mode="int", output_sequence_length=town_max_len)
+    town_text_vectorizer = TextVectorization(max_tokens=len(town_vocab) + 1, output_mode="int", output_sequence_length=town_max_len)
     town_text_vectorizer.adapt(town_vocab)
 
     # Create NN model
-    num_inputs = Input(shape=(19), dtype=tf.float32)
+    num_inputs = Input(shape=(20), dtype=tf.float32)
 
     town_inputs = Input(shape=(1), dtype=tf.string)
     town_embedding_layer = Embedding(input_dim=town_text_vectorizer.vocabulary_size() + 1, input_length=town_max_len, output_dim=town_vec_dim, name='Town_Embedding_Layer')
@@ -243,11 +243,11 @@ def model_input_data(df, new=True):
     if new == True:
         x_train, x_test, y_train, y_test = train_test_split(x_full, y_full, test_size=0.2, shuffle=True, random_state=40)
         
-        data_train = (np.asarray(np.c_[x_train[:,0], x_train[:,3:]]).astype(np.float32), x_train[:,1].reshape((x_train[:,1].shape[0],1)))
-        data_test = (np.asarray(np.c_[x_test[:,0], x_test[:,3:]]).astype(np.float32), x_test[:,1].reshape((x_test[:,1].shape[0],1)))
+        data_train = (np.asarray(np.c_[x_train[:,0], x_train[:,2:]]).astype(np.float32), x_train[:,1].reshape((x_train[:,1].shape[0],1)))
+        data_test = (np.asarray(np.c_[x_test[:,0], x_test[:,2:]]).astype(np.float32), x_test[:,1].reshape((x_test[:,1].shape[0],1)))
         return data_train, y_train, data_test, y_test
     else:
-        data_train = (np.asarray(np.c_[x_full[:,0], x_full[:,3:]]).astype(np.float32), x_full[:,1].reshape((x_full[:,1].shape[0],1)))
+        data_train = (np.asarray(np.c_[x_full[:,0], x_full[:,2:]]).astype(np.float32), x_full[:,1].reshape((x_full[:,1].shape[0],1)))
 
         return data_train, y_full
 
