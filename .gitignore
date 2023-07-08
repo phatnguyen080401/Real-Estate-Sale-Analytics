@@ -16,7 +16,7 @@ venv/
 /src/logs/*.log
 config.ini
 .idea
-
+.csv
 /src/checkpoint
 
 /src/data_source/*.parquet
