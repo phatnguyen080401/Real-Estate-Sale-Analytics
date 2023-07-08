@@ -1,16 +1,24 @@
-import sys
-sys.path.append(".")
-
+import os
 import time  
 import numpy as np  
 import pandas as pd  
 import plotly.express as px 
 import streamlit as st  
 from datetime import datetime
-from config.config import config
+from dotenv import load_dotenv
 
 import snowflake.connector
 from snowflake.connector import errors, errorcode
+
+ROOT_DIR = os.path.dirname(
+            os.path.dirname(
+              os.path.dirname(
+                os.path.abspath(__file__)
+              )
+            )
+          )
+
+load_dotenv(os.path.join(ROOT_DIR, "deploy", ".env"))
 
 st.set_page_config(
   page_title="Real Estate Sales Dashboard",
@@ -19,13 +27,13 @@ st.set_page_config(
 )
 
 config = {
-    "user": config['SNOWFLAKE']['USER'],
-    "password": config['SNOWFLAKE']['PASSWORD'],
-    "account": config['SNOWFLAKE']['ACCOUNT'],
-    "region": config['SNOWFLAKE']['REGION'],
-    "database": config['SNOWFLAKE']['DATABASE'],
-    "warehouse": config['SNOWFLAKE']['WAREHOUSE'],
-    "role": config['SNOWFLAKE']['ROLE']
+    "user": os.getenv('SNOWFLAKE_USER'),
+    "password": os.getenv('SNOWFLAKE_PASSWORD'),
+    "account": os.getenv('SNOWFLAKE_ACCOUNT'),
+    "region": os.getenv('SNOWFLAKE_REGION'),
+    "database": os.getenv('SNOWFLAKE_DATABASE'),
+    "warehouse": os.getenv('SNOWFLAKE_WAREHOUSE'),
+    "role": os.getenv('SNOWFLAKE_ROLE')
 }
 
 def query_total_sale_amount(conn_config):

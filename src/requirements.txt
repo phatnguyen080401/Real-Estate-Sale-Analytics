@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 absl-py==1.4.0
 altair==4.2.2
 anyio==3.7.0
@@ -203,3 +204,17 @@ Werkzeug==2.3.4
 widgetsnbextension==4.0.7
 wrapt==1.14.1
 zipp==1.0.0
+=======
+pyspark==3.2.0
+kafka-python
+pandas
+plotly
+dask
+streamlit
+apache-airflow
+snowflake-connector-python
+snowflake-connector-python[pandas]
+snowflake-sqlalchemy
+great-expectations
+python-dotenv
+>>>>>>> 311cdd6ea58de708def2e213f860b83426e75e94

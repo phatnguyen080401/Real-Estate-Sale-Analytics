@@ -1,17 +1,18 @@
 import sys
 sys.path.append(".")
 
+import os
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from kafka.errors import TopicAlreadyExistsError
 from kafka.admin import KafkaAdminClient, NewTopic
 
-from config.config import config
 from logger.logger import Logger
 
-KAFKA_TOPIC    = config['KAFKA']['KAFKA_TOPIC']
-KAFKA_ENDPOINT = "{0}:{1}".format(config['KAFKA']['KAFKA_ENDPOINT'], config['KAFKA']['KAFKA_ENDPOINT_PORT'])
+KAFKA_ENDPOINT = "{0}:{1}".format(os.getenv("KAFKA_ENDPOINT"), os.getenv("KAFKA_ENDPOINT_PORT"))
+KAFKA_TOPIC    = os.getenv("KAFKA_TOPIC")
 
 logger = Logger("Kafka-Producer")
 

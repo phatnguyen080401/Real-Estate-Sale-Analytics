@@ -11,12 +11,14 @@ env/
 venv/
 
 # Customize
-/deploy/docker/
+/deploy/docker/volumes/*
+
 /src/logs/*.log
 config.ini
 .idea
 
-checkpoint/
+/src/checkpoint
+
 /src/data_source/*.parquet
 /src/tmp/*.parquet
 /src/data/*.parquet
