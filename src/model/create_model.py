@@ -92,8 +92,10 @@ def pre_processing(df):
         for i in range(len(residential_categories)):
             residential_categories[i] = 'Residential_' + residential_categories[i]
 
-        df['PROPERTY_TYPE'] = df['PROPERTY_TYPE'].fillna(df['PROPERTY_TYPE'].mode().iloc[0])
-        df['RESIDENTIAL_TYPE'] = df['RESIDENTIAL_TYPE'].fillna(df['RESIDENTIAL_TYPE'].mode().iloc[0])
+        df['PROPERTY_TYPE'] = df['PROPERTY_TYPE']\
+            .fillna(df['PROPERTY_TYPE'].mode().iloc[0])
+        df['RESIDENTIAL_TYPE'] = df['RESIDENTIAL_TYPE']\
+            .fillna(df['RESIDENTIAL_TYPE'].mode().iloc[0])
 
         dummy_property_df = pd.get_dummies(df['PROPERTY_TYPE'], prefix='Property')
         dummy_property_df = dummy_property_df.reindex(columns=property_categories, fill_value=0)
@@ -108,15 +110,19 @@ def pre_processing(df):
         df = df[df['SALES_RATIO'] < 1.3]
 
         #Scale the values
+        town_encoded_scaler = StandardScaler()
         assessed_prices_scaler = StandardScaler()
         year_scaler = StandardScaler()
-        town_encoded_scaler = StandardScaler()
-
-        df['ASSESSED_VALUE'] = assessed_prices_scaler.fit_transform(df['ASSESSED_VALUE'].values.reshape(-1,1))
-        df['LIST_YEAR'] = year_scaler.fit_transform(df['LIST_YEAR'].values.reshape(-1,1))
+        
+        df['ASSESSED_VALUE'] = assessed_prices_scaler\
+            .fit_transform(df['ASSESSED_VALUE'].values.reshape(-1,1))
+        df['LIST_YEAR'] = year_scaler\
+            .fit_transform(df['LIST_YEAR'].values.reshape(-1,1))
         # Using target encoding method to handle Town feature
-        town_avg_price = df.groupby('TOWN')['SALE_AMOUNT'].mean()
-        df['TOWN_ENCODED'] = df['TOWN'].map(town_avg_price)
+        town_avg_price = df\
+            .groupby('TOWN')['SALE_AMOUNT'].mean()
+        df['TOWN_ENCODED'] = df['TOWN']\
+            .map(town_avg_price)
         df['TOWN_ENCODED'] = town_encoded_scaler.fit_transform(df['TOWN_ENCODED'].values.reshape(-1,1))
         drop_columns = ['TOWN','SERIAL_NUMBER','DATE_RECORDED', 'ADDRESS', 'SALES_RATIO', 'PROPERTY_TYPE', 'RESIDENTIAL_TYPE', 'NON_USE_CODE', 'ASSESSOR_REMARKS', 'OPM_REMARKS', 'LOCATION', 'CREATED_AT']
 
