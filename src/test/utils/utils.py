@@ -1,10 +1,23 @@
 import os
+from dotenv import load_dotenv
 from ruamel import yaml
 
 import great_expectations as gx
 from great_expectations.core.batch import BatchRequest, RuntimeBatchRequest
 from great_expectations.profile.user_configurable_profiler import UserConfigurableProfiler
 from great_expectations.checkpoint import SimpleCheckpoint
+
+ROOT_DIR = os.path.dirname(
+            os.path.dirname(
+              os.path.dirname(
+                os.path.dirname(
+                  os.path.abspath(__file__)
+                )
+              )
+            )
+          )
+
+load_dotenv(os.path.join(ROOT_DIR, "deploy", ".env"))
 
 SFACCOUNT   = os.getenv("SNOWFLAKE_ACCOUNT")
 SFREGION    = os.getenv("SNOWFLAKE_REGION")
