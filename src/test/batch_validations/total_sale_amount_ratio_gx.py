@@ -6,7 +6,7 @@ import utils
 SF_SCHEMA = "sale_batch"
 SF_TABLE  = "total_sale_amount_ratio"
 
-DATASOURCE_NAME = "snowflake_db"
+DATASOURCE_NAME = "sf_batch_dest"
 EXPECTATION_SUITE_NAME = f"{SF_TABLE}_suite"
 CHECKPOINT_NAME = f"{SF_TABLE}_checkpoint"
 

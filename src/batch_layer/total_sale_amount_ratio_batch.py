@@ -1,6 +1,7 @@
 import sys
 sys.path.append(".")
 
+import os
 import time
 from datetime import datetime
 
@@ -8,16 +9,15 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
-from config.config import config
 from logger.logger import Logger
 
 SNOWFLAKE_OPTIONS = {
-    "sfURL" : config['SNOWFLAKE']['URL'],
-    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
-    "sfUser" : config['SNOWFLAKE']['USER'],
-    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
-    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
-    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
+    "sfURL" : os.getenv("SNOWFLAKE_URL"),
+    "sfAccount": os.getenv("SNOWFLAKE_ACCOUNT"),
+    "sfUser" : os.getenv("SNOWFLAKE_USER"),
+    "sfPassword" : os.getenv("SNOWFLAKE_PASSWORD"),
+    "sfDatabase" : os.getenv("SNOWFLAKE_DATABASE"),
+    "sfWarehouse" : os.getenv("SNOWFLAKE_WAREHOUSE")
 }
 
 logger = Logger('Batch-Total-Sale-Amount-Ratio')
