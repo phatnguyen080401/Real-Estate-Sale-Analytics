@@ -6,12 +6,13 @@ import pandas as pd
 import math
 import numpy as np
 import tensorflow as tf
-import pickle
 import matplotlib.pyplot as plt
+import seaborn as sns
+import joblib
 
 import snowflake.connector
 from snowflake.connector import errors, errorcode
-
+from termcolor import colored as cl # text customization
 from datetime import datetime
 
 from pyspark.sql import SparkSession
@@ -19,27 +20,23 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-from sklearn.model_selection import train_test_split
-from keras.models import Model, load_model
-from keras.layers import Dense, Dropout, Flatten, Embedding, TextVectorization, concatenate, BatchNormalization
-from keras import Input
-from keras.optimizers import Adam
-from keras.callbacks import EarlyStopping
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, make_scorer
+from sklearn.linear_model import LinearRegression # OLS algorithm
+from sklearn.linear_model import Ridge # Ridge algorithm
+from sklearn.linear_model import Lasso # Lasso algorithm
+from sklearn.linear_model import BayesianRidge # Bayesian algorithm
+from sklearn.linear_model import ElasticNet # ElasticNet algorithm
+from sklearn.metrics import explained_variance_score as evs # evaluation metric
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from keras.models import load_model
 
-from config.config import config
+import configparser
+#from config.config import config
 from logger.logger import Logger
 
 #%%
-SNOWFLAKE_OPTIONS = {
-    "sfURL" : config['SNOWFLAKE']['URL'],
-    "sfAccount": config['SNOWFLAKE']['ACCOUNT'],
-    "sfUser" : config['SNOWFLAKE']['USER'],
-    "sfPassword" : config['SNOWFLAKE']['PASSWORD'],
-    "sfDatabase" : config['SNOWFLAKE']['DATABASE'],
-    "sfWarehouse" : config['SNOWFLAKE']['WAREHOUSE']
-}
-
+config = configparser.ConfigParser()
+config.read('/mnt/c/Users/Tuan/Desktop/Mix/NYC-Taxi-Analytics/src/config.ini')
 configure = {
     "user": config['SNOWFLAKE']['USER'],
     "password": config['SNOWFLAKE']['PASSWORD'],
@@ -50,7 +47,7 @@ configure = {
     "role": config['SNOWFLAKE']['ROLE']
 }
 
-logger = Logger('Get-Train-Data')
+#logger = Logger('Get-Train-Data')
 
 class GetTrainData:
     def __init__(self):
@@ -67,36 +64,38 @@ class GetTrainData:
         
         self._spark.sparkContext.setLogLevel("ERROR")
 
-    def get(self):
-        try:
-            df = self._spark \
-                        .read \
-                        .format("snowflake") \
-                        .options(**SNOWFLAKE_OPTIONS) \
-                        .option("sfSchema", "sale_lake") \
-                        .option("dbtable", "data_lake") \
-                        .load()
+    # def get(self):
+    #     try:
+    #         df = self._spark \
+    #                     .read \
+    #                     .format("snowflake") \
+    #                     .options(**SNOWFLAKE_OPTIONS) \
+    #                     .option("sfSchema", "sale_lake") \
+    #                     .option("dbtable", "data_lake") \
+    #                     .load()
             
-            logger.info(f"Read data from table sale_lake.data_lake")
+    #         logger.info(f"Read data from table sale_lake.data_lake")
 
-            return df
-        except Exception as e:
-            logger.error(e)
+    #         return df
+    #     except Exception as e:
+    #         logger.error(e)
 
-def pre_processing(df, new=False):
-        # Fill null value to None-Property and None-Residential.
-        property_categories = ['Commercial', 'Residential', 'Vacant Land', 'Apartments', 'Industrial', 'Public Utility', 'Condo', 'Two Family', 'Three Family', 'Single Family', 'Four Family', 'None-Property']
+def pre_processing(df):
+        # Replace with the most occurrent value and turn to dummy values.
+        property_categories = ['Commercial', 'Residential', 'Vacant Land', 'Apartments', 'Industrial', 'Public Utility', 'Condo', 'Two Family', 'Three Family', 'Single Family', 'Four Family']
 
         for i in range(len(property_categories)):
             property_categories[i] = 'Property_' + property_categories[i]
 
-        residential_categories = ['Single Family', 'Condo', 'Two Family', 'Three Family', 'Four Family', 'None-Residential']
+        residential_categories = ['Single Family', 'Condo', 'Two Family', 'Three Family', 'Four Family']
 
         for i in range(len(residential_categories)):
             residential_categories[i] = 'Residential_' + residential_categories[i]
 
-        df['PROPERTY_TYPE'] = df['PROPERTY_TYPE'].fillna('None-Property')
-        df['RESIDENTIAL_TYPE'] = df['RESIDENTIAL_TYPE'].fillna('None-Residential')
+        df['PROPERTY_TYPE'] = df['PROPERTY_TYPE']\
+            .fillna(df['PROPERTY_TYPE'].mode().iloc[0])
+        df['RESIDENTIAL_TYPE'] = df['RESIDENTIAL_TYPE']\
+            .fillna(df['RESIDENTIAL_TYPE'].mode().iloc[0])
 
         dummy_property_df = pd.get_dummies(df['PROPERTY_TYPE'], prefix='Property')
         dummy_property_df = dummy_property_df.reindex(columns=property_categories, fill_value=0)
@@ -110,146 +109,25 @@ def pre_processing(df, new=False):
         df = df[df['SALES_RATIO'] > 0.3]
         df = df[df['SALES_RATIO'] < 1.3]
 
-        drop_columns = ['SERIAL_NUMBER', 'DATE_RECORDED', 'ADDRESS', 'SALES_RATIO', 'PROPERTY_TYPE', 'RESIDENTIAL_TYPE', 'NON_USE_CODE', 'ASSESSOR_REMARKS', 'OPM_REMARKS', 'LOCATION', 'CREATED_AT']
+        #Scale the values
+        town_encoded_scaler = StandardScaler()
+        assessed_prices_scaler = StandardScaler()
+        year_scaler = StandardScaler()
+        
+        df['ASSESSED_VALUE'] = assessed_prices_scaler\
+            .fit_transform(df['ASSESSED_VALUE'].values.reshape(-1,1))
+        df['LIST_YEAR'] = year_scaler\
+            .fit_transform(df['LIST_YEAR'].values.reshape(-1,1))
+        # Using target encoding method to handle Town feature
+        town_avg_price = df\
+            .groupby('TOWN')['SALE_AMOUNT'].mean()
+        df['TOWN_ENCODED'] = df['TOWN']\
+            .map(town_avg_price)
+        df['TOWN_ENCODED'] = town_encoded_scaler.fit_transform(df['TOWN_ENCODED'].values.reshape(-1,1))
+        drop_columns = ['TOWN','SERIAL_NUMBER','DATE_RECORDED', 'ADDRESS', 'SALES_RATIO', 'PROPERTY_TYPE', 'RESIDENTIAL_TYPE', 'NON_USE_CODE', 'ASSESSOR_REMARKS', 'OPM_REMARKS', 'LOCATION', 'CREATED_AT']
 
         df = df.drop(columns=drop_columns)
-
-        #prices_scaler = StandardScaler()
-        if new == True:
-            assessed_prices_scaler = StandardScaler()
-            years_scaler = StandardScaler()
-
-            #df['SALE_AMOUNT'] = prices_scaler.fit_transform(df['SALE_AMOUNT'].values.reshape(-1,1))
-            df['ASSESSED_VALUE'] = assessed_prices_scaler.fit_transform(df['ASSESSED_VALUE'].values.reshape(-1,1))
-            df['LIST_YEAR'] = years_scaler.fit_transform(df['LIST_YEAR'].values.reshape(-1,1))
-
-            with open('assessed_scaler.pkl', 'wb') as file:
-                pickle.dump(assessed_prices_scaler, file)
-
-            with open('year_scaler.pkl', 'wb') as file:
-                pickle.dump(years_scaler, file)
-
-            return df
-        else:
-            with open('./model/assessed_scaler.pkl', 'rb') as file:
-                assessed_prices_scaler = pickle.load(file)
-
-            with open('./model/year_scaler.pkl', 'rb') as file:
-                years_scaler = pickle.load(file)
-
-            df['ASSESSED_VALUE'] = assessed_prices_scaler.transform(df['ASSESSED_VALUE'].values.reshape(-1,1))
-            df['LIST_YEAR'] = years_scaler.transform(df['LIST_YEAR'].values.reshape(-1,1))
-
-            return df
-
-def create_model(neurons, num_layers, dropout_rate):
-    def find_max_len(vocab):
-        max_len = 0
-        for string in vocab:
-            if max_len < len(string.split()):
-                max_len = len(string.split())
-        return max_len
-
-    town_vocab = np.unique(df['TOWN'])
-    town_vec_dim = int(math.sqrt(len(town_vocab)))
-    town_max_len = find_max_len(town_vocab)
-    town_text_vectorizer = TextVectorization(max_tokens=len(town_vocab) + 1, output_mode="int", output_sequence_length=town_max_len)
-    town_text_vectorizer.adapt(town_vocab)
-
-    # Create NN model
-    num_inputs = Input(shape=(20), dtype=tf.float32)
-
-    town_inputs = Input(shape=(1), dtype=tf.string)
-    town_embedding_layer = Embedding(input_dim=town_text_vectorizer.vocabulary_size() + 1, input_length=town_max_len, output_dim=town_vec_dim, name='Town_Embedding_Layer')
-    # Preprocess the string inputs, turning them into int sequences
-    town_sequences = town_text_vectorizer(town_inputs)
-    town_embed = town_embedding_layer(town_sequences)
-    town_flatten = Flatten()(town_embed)
-
-    concaten = concatenate([num_inputs, town_flatten])
-
-    batch_norm1 = BatchNormalization()(concaten)
-
-    previous_layer = batch_norm1
-
-    for _ in range(num_layers):
-        hidden_layer = Dense(neurons, activation='relu')(previous_layer)
-        drop_out = Dropout(dropout_rate)(hidden_layer)
-        previous_layer = drop_out
-
-    output = Dense(1)(previous_layer)
-
-    model = Model(inputs=[num_inputs, town_inputs], outputs=[output])
-
-    return model
-
-def hyperpara_tunning(num_neurons, num_layers, droprates, batch_size_list, epochs_list):
-    models = []
-    best_mae = 1
-    best_model_index = 0
-    for neuron in num_neurons:
-        for layer in num_layers:
-            for droprate in droprates:
-                models.append(create_model(neuron, layer, droprate))
-    models_fresh = models.copy()
-    for index, model in enumerate(models):
-        model.compile(loss='mse', optimizer=Adam(learning_rate=1e-3), metrics=['accuracy'])
-        early_stop = EarlyStopping(monitor='val_loss', patience=4)
-        history = model.fit(data_train, np.asarray(y_train).astype(np.float32), epochs=10, 
-                            validation_split=0.2,
-                            batch_size= 16,
-                            callbacks=[early_stop])
-        
-        mae = mean_absolute_error(y_test, model.predict(data_test))
-        print(mae)
-        if mae < best_mae:
-            best_mae = mae
-            best_model_index = index
-
-    models_fresh[best_model_index].save('./model/best_fresh_model')
-
-    best_epochs = 10
-    best_batch_size = 16
-    
-    for batchsize in batch_size_list:
-        for epochs in epochs_list:
-            model = load_model('./model/best_fresh_model')
-            model.compile(loss='mse', optimizer=Adam(learning_rate=1e-3), metrics=['accuracy'])
-            early_stop = EarlyStopping(monitor='val_loss', patience=4)
-            history = model.fit(data_train, np.asarray(y_train).astype(np.float32), epochs=epochs, 
-                                validation_split=0.2,
-                                batch_size= batchsize,
-                                callbacks=[early_stop])
-            mae = mean_absolute_error(y_test, model.predict(data_test))
-            if mae < best_mae:
-                best_mae = mae
-                best_epochs = epochs
-                best_batch_size = batchsize
-
-    return models_fresh[best_model_index], best_epochs, best_batch_size
-
-def save_model(model, best_batch_size, best_epochs):
-    model.compile(loss='mse', optimizer=Adam(learning_rate=1e-3), metrics=['accuracy'])
-    early_stop = EarlyStopping(monitor='val_loss', patience=4)
-    history = model.fit(data_train, np.asarray(y_train).astype(np.float32), epochs=best_epochs, 
-                        validation_split=0.2,
-                        batch_size= best_batch_size,
-                        callbacks=[early_stop])
-    model.save('./model/best_model')
-
-def model_input_data(df, new=True):
-    x_full = df.iloc[:,df.columns != 'SALE_AMOUNT'].values
-    y_full = df.iloc[:,df.columns == 'SALE_AMOUNT'].values
-    if new == True:
-        x_train, x_test, y_train, y_test = train_test_split(x_full, y_full, test_size=0.2, shuffle=True, random_state=40)
-        
-        data_train = (np.asarray(np.c_[x_train[:,0], x_train[:,2:]]).astype(np.float32), x_train[:,1].reshape((x_train[:,1].shape[0],1)))
-        data_test = (np.asarray(np.c_[x_test[:,0], x_test[:,2:]]).astype(np.float32), x_test[:,1].reshape((x_test[:,1].shape[0],1)))
-        return data_train, y_train, data_test, y_test
-    else:
-        data_train = (np.asarray(np.c_[x_full[:,0], x_full[:,2:]]).astype(np.float32), x_full[:,1].reshape((x_full[:,1].shape[0],1)))
-
-        return data_train, y_full
+        return df
 
 def get_new_data(conn_config, lasted_sample_date):
     try:
@@ -282,55 +160,104 @@ def get_new_data(conn_config, lasted_sample_date):
             print(err)
     else:
         conn.close()
+
+def create_model():
+    models = []
+    models.append(('Linear Regression', LinearRegression()))
+    models.append(('Rigde', Ridge()))
+    models.append(('Lasso', Lasso()))
+    models.append(('Bayesian', BayesianRidge()))
+    models.append(('Elastic Net', ElasticNet()))  
+
+    return models      
+def mape_score(y_true, y_pred):
+        return -np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+
+def modeling(x_train, y_train, x_val, y_val):
+    models = create_model()
+
+    print(cl('EXPLAINED VARIANCE AND MAPE SCORE:', attrs = ['bold']))
+    print('-------------------------------------------------------------------------------')
+    
+    scorer = make_scorer(mape_score, greater_is_better=False)
+    vari = []
+    mape = []
+    cross_validate = []
+    models_name = []
+    for name, model in models:
+        models_name.append(name)
+        model.fit(x_train, y_train)
+        predicted = model.predict(x_val)
+        vari.append(evs(y_val, predicted))
+        mape.append(mean_absolute_percentage_error(y_val, predicted))
+        print('-------------------------------------------------------------------------------')
+        print(cl('Explained Variance Score of {} model is {}'.format(name, evs(y_val, predicted)), attrs = ['bold']))
+        print(cl('MAPE of {} model is {}'.format(name, mean_absolute_percentage_error(y_val, predicted)), attrs = ['bold']))
+
+    print('Cross Validate')
+    for name, model in models:
+        cross = cross_val_score(model, X_train, y_train,cv=5, scoring=scorer).mean()
+        cross_validate.append(cross)
+        print(cl('Cross-validated MAPE of {} model is {}'.format(name, cross), attrs = ['bold']))
+
+    return vari, mape, cross_validate, models_name
 #%%
 if __name__ == '__main__':
-    new = 1
-    if new == 0:
-        df = GetTrainData().get()
-        df = df.toPandas()
-
+        # df = GetTrainData().get()
+        # df = df.toPandas()
+        df = pd.read_csv('Real_Estate_Sales_2001-2020_GL.csv')
+        df = df[200000:400000]
+        df.columns = ['SERIAL_NUMBER','LIST_YEAR', 'DATE_RECORDED', 'TOWN','ADDRESS', 'ASSESSED_VALUE','SALE_AMOUNT','SALES_RATIO', 'PROPERTY_TYPE', 'RESIDENTIAL_TYPE', 'NON_USE_CODE', 'ASSESSOR_REMARKS', 'OPM_REMARKS', 'LOCATION']
+        df['CREATED_AT'] = 0
+        df = df[df['SALE_AMOUNT']<1500000]
         lasted_sample_date = df['CREATED_AT'].max()
-        with open("./model/lasted_sample_date.txt", "w") as file:
+        with open("lasted_sample_date.txt", "w") as file:
         # Write data to the file
             file.write(f'{lasted_sample_date}')
 
-        df = pre_processing(df, True)
+        df = pre_processing(df)
+        X_full = df.loc[:,df.columns != 'SALE_AMOUNT'].values
+        y_full = df['SALE_AMOUNT'].values
 
-        data_train, y_train, data_test, y_test = model_input_data(df)
-
-        num_neurons = [20, 30, 40, 50]
-        num_layers = [2, 3, 4]
-        droprates = [0.1, 0.2]
-
-        batch_size_list = [8, 16, 32, 64]
-        epochs_list = [10, 15]
+        X_train, X_test, y_train, y_test = train_test_split(X_full, y_full, test_size = 0.15, random_state = 0)
         
-        model, best_epochs, best_batch_size = hyperpara_tunning(num_neurons, num_layers, droprates, batch_size_list, epochs_list)
-        save_model(model, best_batch_size, best_epochs)
-    else:
-        with open("./model/lasted_sample_date.txt", "r") as file:
-            # Read lines from the file
-            lines = file.readlines()
-        lasted_sample_date = datetime.strptime(lines[0], "%Y-%m-%d %H:%M:%S.%f")
-        model = load_model('./model/best_model')
-        while True:
-            new_df = get_new_data(configure, lasted_sample_date)
-            if len(new_df) > 5000:
-                lasted_sample_date = new_df['CREATED_AT'].max()
-                
-                train_data = new_df.sample(frac=0.9)
-                save_data = new_df.sample(frac=0.1)
+        vari, mape, cross, models_name = modeling(X_train, y_train, X_test, y_test)
+        vari = [float('%.4f' % (va * 100)) for va in vari]
+        mape = [float('%.4f' % (ma * 100)) for ma in mape]
+        cross = [float('%.4f' % cro) for cro in cross]
 
-                save_data.to_csv('./model/data.csv', index=False)
-                with open("./model/lasted_sample_date.txt", "w") as file:
-                # Write data to the file
-                    file.write(f'{lasted_sample_date}')
-                train_data = pre_processing(train_data)
-                data_train, y_train = model_input_data(train_data, False)
-                model.train_on_batch(data_train, np.asarray(y_train).astype(np.float32))
-                model.save('./model/best_model')
-                print('Learning Complete')
-            else:
-                print('Skip')
-            time.sleep(60*30)
+        ax = sns.barplot(x=models_name, y=vari)
+        for i, v in enumerate(vari):
+            ax.text(i, v, str(v), ha='center', va='bottom')
+        # Set labels and title
+        plt.ylim(0, 100)
+        plt.xlabel('Models')
+        plt.ylabel('Values (%)')
+        plt.title('Explained Variance Score')
+
+        param_grid = {
+            'alpha': [1e-08, 0.001, 0.01, 1, 5, 10,
+                                   20, 30, 35, 40, 45, 50, 55, 100, 200],  # Values for the alpha hyperparameter
+            'max_iter': [1000, 2000, 3000, 4000],  # Values for the max_iter hyperparameter
+            'selection': ['cyclic', 'random'],  # Values for the selection criterion hyperparameter
+            'warm_start': [True, False],
+            'precompute': [False, True]
+        }
+        lasso = Lasso()
+        scorer = make_scorer(mape_score, greater_is_better=False)
+
+        grid_search = GridSearchCV(estimator=lasso, param_grid=param_grid, cv=5, scoring=scorer)
+        grid_search.fit(X_train, y_train)
+
+        print("Best Hyperparameters:", grid_search.best_params_)
+        print("Best Mean Absolute Percentage Error:", -grid_search.best_score_)
+
+        lasso = Lasso(alpha=100, max_iter=1000, precompute=False, selection='random', warm_start=False)
+        lasso.fit(X_train, y_train)
+
+        y_pred = lasso.predict(X_test)
+        mape_pre = mean_absolute_percentage_error(y_true=y_test, y_pred=y_pred)
+
+        joblib.dump(lasso, 'lasso_model.sav')
+
 # %%
