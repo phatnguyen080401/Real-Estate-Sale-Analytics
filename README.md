@@ -83,6 +83,8 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │   ├── __init__.py
 │   │   └── logger.py
 │   ├── logs
+│   ├── model
+│   │   ├── create_model.py
 │   ├── speed_layer
 │   │   ├── total_customer_by_property_type_speed.py
 │   │   ├── total_customer_by_town_speed.py
@@ -96,8 +98,10 @@ taking advantage of both batch and stream processing methods. Besides, we also a
 │   │       ├── __init__.py
 │   │       └── utils.py
 │   ├── tmp
+│   ├── .dockerignore
 │   ├── Dockerfile
 │   └── requirements.txt
+├── .gitignore
 ├── Makefile
 ├── README.md
 ```
