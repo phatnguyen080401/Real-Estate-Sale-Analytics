@@ -143,8 +143,7 @@ There are 2 scripts for creating database and user roles:
    * `user_roles.sql`: This script used to create user role **Database admin** who has ability to query and CRUD tables. 
 
 ## Dashboard
-
-
+![Dashboard](https://github.com/phatnguyen080401/NYC-Taxi-Analytics/blob/master/images/dashboard.png)
 
 ## Airflow Webserver UI
 ### Local
