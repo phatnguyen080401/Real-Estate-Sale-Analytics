@@ -7,17 +7,7 @@ from great_expectations.core.batch import BatchRequest, RuntimeBatchRequest
 from great_expectations.profile.user_configurable_profiler import UserConfigurableProfiler
 from great_expectations.checkpoint import SimpleCheckpoint
 
-ROOT_DIR = os.path.dirname(
-            os.path.dirname(
-              os.path.dirname(
-                os.path.dirname(
-                  os.path.abspath(__file__)
-                )
-              )
-            )
-          )
-
-load_dotenv(os.path.join(ROOT_DIR, "deploy", ".env"))
+load_dotenv(os.path.join("..", "..", "..", "deploy", ".env"))
 
 SFACCOUNT   = os.getenv("SNOWFLAKE_ACCOUNT")
 SFREGION    = os.getenv("SNOWFLAKE_REGION")

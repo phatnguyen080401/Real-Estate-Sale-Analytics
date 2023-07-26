@@ -10,15 +10,7 @@ from dotenv import load_dotenv
 import snowflake.connector
 from snowflake.connector import errors, errorcode
 
-ROOT_DIR = os.path.dirname(
-            os.path.dirname(
-              os.path.dirname(
-                os.path.abspath(__file__)
-              )
-            )
-          )
-
-load_dotenv(os.path.join(ROOT_DIR, "deploy", ".env"))
+load_dotenv(os.path.join("..", "..", "deploy", ".env"))
 
 st.set_page_config(
   page_title="Real Estate Sales Dashboard",
